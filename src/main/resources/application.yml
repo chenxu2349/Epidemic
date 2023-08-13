@@ -1,0 +1,13 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://114.213.213.163:3306/epidemic?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: awen
+    password: 123456
+mybatis:
+  #  mapper???????
+  mapper-locations: classpath:/mybatis/mapper/*.xml
+  #  ????????
+  type-aliases-package: com.example.epidemic.pojo
