@@ -36,7 +36,7 @@
         <result column="contact_of_vaccinations" property="contactOfVaccinations"></result>
         <result column="contact_history_of_illness" property="contactHistoryOfIllness"></result>
         <result column="potential_patient_probability" property="potentialPatientProbability"></result>
-        <result column="potential_patient" property="potentialP atient"></result>
+        <result column="potential_patient" property="potentialPatient"></result>
         <result column="heart_rate" property="heartRate"></result>
         <result column="blood_pressure" property="bloodPressure"></result>
         <result column="blood_glucose" property="bloodGlucose"></result>
@@ -53,13 +53,19 @@
     </select>
 
     <select id="queryPatientsByDate" resultMap="PatientMap">
-        select * from patients_info as pi, patients_track_info as pti
-        where
-            DATE_FORMAT(pti.end_time,'%Y-%m-%d') >= DATE_FORMAT(#{date},'%Y-%m-%d')
-            and DATE_FORMAT(pti.start_time,'%Y-%m-%d') &lt;= DATE_FORMAT(#{date},'%Y-%m-%d')
-            and pi.patient_id = pti.patient_id
+        select *
+        from patients_info as pi
+        where pi.patient_id in(
+                  select distinct(pti.patient_id) from patients_track_info as pti
+                  where DATE_FORMAT(pti.end_time,'%Y-%m-%d') >= DATE_FORMAT(#{date},'%Y-%m-%d')
+                        and DATE_FORMAT(pti.start_time,'%Y-%m-%d') &lt;= DATE_FORMAT(#{date},'%Y-%m-%d')
+        )
     </select>
 
-    <select id="queryContacts" resultMap=""></select>
+    <select id="queryContacts" resultMap="ContactMap">
+        select *
+        from contacts_info as ci
+        where ci.patient_id = #{patient_id} and ci.area_code = #{area_code} and ci.batch = #{batch}
+    </select>
 
 </mapper>

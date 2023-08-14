@@ -19,7 +19,7 @@ public class contact {
 
     private int contactOfVaccinations;
 
-    private int contact_historyOfIllness;
+    private int contactHistoryOfIllness;
 
     private double potentialPatientProbability;
 
@@ -114,11 +114,11 @@ public class contact {
     }
 
     public int getContact_historyOfIllness() {
-        return contact_historyOfIllness;
+        return contactHistoryOfIllness;
     }
 
     public void setContact_historyOfIllness(int contact_historyOfIllness) {
-        this.contact_historyOfIllness = contact_historyOfIllness;
+        this.contactHistoryOfIllness = contact_historyOfIllness;
     }
 
     public double getPotentialPatientProbability() {
@@ -213,7 +213,7 @@ public class contact {
                 ", contactTel='" + contactTel + '\'' +
                 ", contactAddress='" + contactAddress + '\'' +
                 ", contactOfVaccinations=" + contactOfVaccinations +
-                ", contact_historyOfIllness=" + contact_historyOfIllness +
+                ", contact_historyOfIllness=" + contactHistoryOfIllness +
                 ", potentialPatientProbability=" + potentialPatientProbability +
                 ", potentialPatient=" + potentialPatient +
                 ", heartRate='" + heartRate + '\'' +

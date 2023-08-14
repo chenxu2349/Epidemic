@@ -14,5 +14,5 @@ public interface testMapper {
 
     List<patient> queryPatientsByDate(String date);
 
-    List<contact> queryContacts(int patient_id, String area_code);
+    List<contact> queryContacts(int patient_id, String area_code, int batch);
 }
