@@ -64,7 +64,7 @@ public class sql1 {
             sql += "'"; sql += tel; sql += "'"; sql += ",";
 
             // contact_address
-            int seed8 = seed8 = (int)(0 + Math.random()*(16 - 0 + 1));
+            int seed8 = (int)(0 + Math.random()*(16 - 0 + 1));
             sql += "'"; sql += homePool[seed8]; sql += "'"; sql += ",";
 
             // contact of vacc

@@ -47,9 +47,40 @@
         <result column="batch" property="batch"></result>
     </resultMap>
 
-    <select id="queryById" resultMap="PatientMap">
+    <resultMap id="PatientTrackMap" type="com.example.epidemic.pojo.patientTrack">
+        <result column="patient_track_id" property="patientTrackId"></result>
+        <result column="patient_id" property="patientId"></result>
+        <result column="area_id" property="areaId"></result>
+        <result column="start_time" property="startTime"></result>
+        <result column="end_time" property="endTime"></result>
+        <result column="mask" property="mask"></result>
+        <result column="temperature" property="temperature"></result>
+        <result column="humidness" property="humidness"></result>
+    </resultMap>
+
+    <resultMap id="ContactTrackMap" type="com.example.epidemic.pojo.contactTrack">
+        <result column="contact_track_id" property="contactTrackId"></result>
+        <result column="contact_id" property="contactId"></result>
+        <result column="area_id" property="areaId"></result>
+        <result column="start_time" property="startTime"></result>
+        <result column="end_time" property="endTime"></result>
+        <result column="mask" property="mask"></result>
+        <result column="temperature" property="temperature"></result>
+        <result column="humidness" property="humidness"></result>
+    </resultMap>
+
+    <resultMap id="AreaMap" type="com.example.epidemic.pojo.area">
+        <result column="area_id" property="areaId"></result>
+        <result column="area_code" property="areaCode"></result>
+        <result column="area_name" property="areaName"></result>
+        <result column="regional_location" property="regionalLocation"></result>
+        <result column="population_density" property="populationDensity"></result>
+        <result column="population_mobility" property="populationMobility"></result>
+    </resultMap>
+
+    <select id="queryPatientById" resultMap="PatientMap">
         select * from patients_info
-        where patient_id = #{id}
+        where patient_id = #{patient_id}
     </select>
 
     <select id="queryPatientsByDate" resultMap="PatientMap">
@@ -66,6 +97,21 @@
         select *
         from contacts_info as ci
         where ci.patient_id = #{patient_id} and ci.area_code = #{area_code} and ci.batch = #{batch}
+    </select>
+
+    <select id="queryPatientTrackById" resultMap="PatientTrackMap">
+        select * from patients_track_info as pti
+        where pti.patient_id = #{patient_id}
+    </select>
+
+    <select id="queryContactTrackById" resultMap="ContactTrackMap">
+        select * from contacts_track_info as cti
+        where pti.contact_id = #{contact_id}
+    </select>
+    
+    <select id="queryAreaPeopleDensity" resultMap="AreaMap">
+        select * from area_info
+        where area_id = #{area_id}
     </select>
 
 </mapper>
