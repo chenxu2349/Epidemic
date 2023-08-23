@@ -1,15 +1,12 @@
 package com.example.epidemic.controller;
 
-import com.example.epidemic.mapper.testMapper;
 import com.example.epidemic.pojo.contact;
 import com.example.epidemic.pojo.patient;
 import com.example.epidemic.pojo.statistics;
 import com.example.epidemic.service.inferenceService;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.websocket.server.PathParam;

@@ -1,7 +1,9 @@
 package com.example.epidemic.service;
 
 import com.example.epidemic.mapper.testMapper;
+import com.example.epidemic.pojo.contact;
 import com.example.epidemic.pojo.contactTrack;
+import com.example.epidemic.pojo.patient;
 import com.example.epidemic.pojo.patientTrack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,49 @@ public class relevanceService {
         return mp1.queryContactTrackById(contact_id);
     }
 
+    public boolean checkTwoPerson(patient p1, patient p2) throws ParseException {
+        List<patientTrack> p1Tracks = getPatientTrackById(p1.getPatientId());
+        List<patientTrack> p2Tracks = getPatientTrackById(p2.getPatientId());
+        for (patientTrack pt1 : p1Tracks) {
+            for (patientTrack pt2 : p2Tracks) {
+                if (checkTimeAndZoneContact(pt1, pt2)) return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean checkTwoPerson(patient p1, contact p2) throws ParseException {
+        List<patientTrack> p1Tracks = getPatientTrackById(p1.getPatientId());
+        List<patientTrack> p2Tracks = getPatientTrackById(p2.getPatientId());
+        for (patientTrack pt1 : p1Tracks) {
+            for (patientTrack pt2 : p2Tracks) {
+                if (checkTimeAndZoneContact(pt1, pt2)) return true;
+            }
+        }
+        return false;
+    }
+
     public boolean checkTimeAndZoneContact(patientTrack pt, contactTrack ct) throws ParseException {
+        if (pt.getAreaId() != ct.getAreaId()) return false;
+
+        // String类型转为日期类型比较
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        // 时间戳，毫秒
+        long ps = format.parse(pt.getStartTime()).getTime();
+        long pe = format.parse(pt.getEndTime()).getTime();
+        long cs = format.parse(ct.getStartTime()).getTime();
+        long ce = format.parse(ct.getEndTime()).getTime();
+
+        if (cs >= ps && cs <= pe) return true;
+        if (ce >= ps && ce <= pe) return true;
+        if (ps >= cs && ps <= ce) return true;
+        if (pe >= cs && pe <= ce) return true;
+
+        return false;
+    }
+
+    public boolean checkTimeAndZoneContact(patientTrack pt, patientTrack ct) throws ParseException {
         if (pt.getAreaId() != ct.getAreaId()) return false;
 
         // String类型转为日期类型比较
