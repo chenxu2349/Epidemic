@@ -17,7 +17,7 @@ public class helloController {
     @GetMapping("/testMybatis")
     @ResponseBody
     public String mybatisDemo(@RequestParam(value = "id", required = true) int id) {
-        patient p1 = mp1.queryById(id);
+        patient p1 = mp1.queryPatientById(id);
         System.out.println(p1.toString());
         return p1.toString();
     }

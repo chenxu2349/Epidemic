@@ -187,41 +187,85 @@ package com.example;
 //    }
 //}
 
-import java.util.Scanner;
-
 public class leetcode {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int n = scanner.nextInt();
-        int m = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline character
+    static int N = 8;
+    static int count = 0;
 
-        char[][] board = new char[n][m];
-        for (int i = 0; i < n; i++) {
-            board[i] = scanner.nextLine().toCharArray();
+    public static void main(String[] args) {
+        int board[][] = new int[N][N];
+        placeQueen(board, 0);
+        System.out.println("Total solutions: " + count);
+    }
+
+    static void printSolution(int board[][]) {
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                System.out.print(" " + board[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    static boolean isSafe(int board[][], int row, int col) {
+        int i, j;
+
+        for (i = 0; i < col; i++) {
+            if (board[row][i] == 1) return false;
         }
 
-        int count = 0;
+        for (i = row, j = col; i >= 0 && j >= 0; i--, j--) {
+            if (Math.abs(i - row) > 2 && board[i][j] == 1) return false;
+        }
 
-        // 遍历每一个棋子作为正方形的一个角
-        for (int x1 = 0; x1 < n; x1++) {
-            for (int y1 = 0; y1 < m; y1++) {
-                if (board[x1][y1] == 'X') {
-                    for (int k = 1; x1 + k < n && y1 + k < m; k++) {
-                        // 检查其余三个角是否也是'X'
-                        int x2 = x1 + k, y2 = y1;
-                        int x3 = x1, y3 = y1 + k;
-                        int x4 = x1 + k, y4 = y1 + k;
+        for (i = row, j = col; j >= 0 && i < N; i++, j--) {
+            if (Math.abs(i - row) > 2 && board[i][j] == 1) return false;
+        }
 
-                        if (board[x2][y2] == 'X' && board[x3][y3] == 'X' && board[x4][y4] == 'X') {
-                            count += 1;
-                        }
-                    }
-                }
+        return true;
+    }
+
+    static boolean placeQueen(int board[][], int col) {
+        if (col >= N) {
+            printSolution(board);
+            count++;
+            return true;
+        }
+
+        boolean res = false;
+        for (int i = 0; i < N; i++) {
+            if (isSafe(board, i, col)) {
+                board[i][col] = 1;
+                res = placeQueen(board, col + 1) || res;
+                board[i][col] = 0;
             }
         }
 
-        System.out.println(count);
+        return res;
+    }
+    public static int[] merge(int[] arr1, int[] arr2) {
+
+        int len = arr1.length + arr2.length;
+        int[] result = new int[len];
+        int i = 0, j = 0, k = 0;
+
+        while (i < arr1.length && j < arr2.length) {
+            if (arr1[i] < arr2[j]) {
+                result[k++] = arr1[i++];
+            } else {
+                result[k++] = arr2[j++];
+            }
+        }
+
+        while (i < arr1.length) {
+            result[k++] = arr1[i++];
+        }
+
+        while (j < arr2.length) {
+            result[k++] = arr2[j++];
+        }
+
+        return result;
     }
 }
 

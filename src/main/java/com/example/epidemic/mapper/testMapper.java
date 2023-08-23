@@ -11,7 +11,7 @@ import java.util.List;
 public interface testMapper {
     patient queryPatientById(int patient_id);
 
-    List<patient> queryPatientsByDate(String date);
+    List<patient> queryPatientsByDate(String date, String areaCode);
 
     List<contact> queryContacts(int patient_id, String area_code, int batch);
 
@@ -20,4 +20,12 @@ public interface testMapper {
     List<contactTrack> queryContactTrackById(int contact_id);
 
     area queryAreaPeopleDensity(int area_id);
+
+    int countPatient(String areaCode);
+
+    int countPotentialPatient(String areaCode);
+
+    void setPossibility(int contactId, double possibility);
+
+    void setPotentialPatient(int contactId, int isPotential);
 }

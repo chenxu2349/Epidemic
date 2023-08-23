@@ -90,7 +90,7 @@
                   select distinct(pti.patient_id) from patients_track_info as pti
                   where DATE_FORMAT(pti.end_time,'%Y-%m-%d') >= DATE_FORMAT(#{date},'%Y-%m-%d')
                         and DATE_FORMAT(pti.start_time,'%Y-%m-%d') &lt;= DATE_FORMAT(#{date},'%Y-%m-%d')
-        )
+        ) and pi.area_code = #{areaCode}
     </select>
 
     <select id="queryContacts" resultMap="ContactMap">
@@ -106,7 +106,7 @@
 
     <select id="queryContactTrackById" resultMap="ContactTrackMap">
         select * from contacts_track_info as cti
-        where pti.contact_id = #{contact_id}
+        where cti.contact_id = #{contact_id}
     </select>
     
     <select id="queryAreaPeopleDensity" resultMap="AreaMap">
@@ -114,4 +114,23 @@
         where area_id = #{area_id}
     </select>
 
+    <select id="countPatient" resultType="java.lang.Integer">
+        select count(*) from patients_info
+        where area_code = #{areaCode}
+    </select>
+
+    <select id="countPotentialPatient" resultType="java.lang.Integer">
+        select count(*) from contacts_info
+        where area_code = #{areaCode} and potential_patient = 1
+    </select>
+
+    <update id="setPossibility">
+        update contacts_info set potential_patient_probability = #{possibility}
+        where contact_id = #{contactId}
+    </update>
+
+    <update id="setPotentialPatient">
+        update contacts_info set potential_patient = #{isPotential}
+        where contact_id = #{contactId}
+    </update>
 </mapper>

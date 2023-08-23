@@ -3,6 +3,7 @@ package com.example.epidemic.controller;
 import com.example.epidemic.mapper.testMapper;
 import com.example.epidemic.pojo.contact;
 import com.example.epidemic.pojo.patient;
+import com.example.epidemic.pojo.statistics;
 import com.example.epidemic.service.inferenceService;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ public class inferenceController {
 
     @GetMapping("/getPatientsByDate")
     @ResponseBody
-    public List<patient> getPatients(@PathParam("date") String date) {
-        List<patient> patients = service1.getPatients(date);
+    public List<patient> getPatients(@PathParam("date") String date, @PathParam("areaCode") String areaCode) {
+        List<patient> patients = service1.getPatients(date, areaCode);
         if (patients.size() == 0) return null;
         else return patients;
     }
@@ -52,4 +53,18 @@ public class inferenceController {
     }
 
     // 统计各区域患者和潜在患者数量
+    @GetMapping("/countPatientAndPotential")
+    @ResponseBody
+    public List<statistics> areaCount() {
+        String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
+        List<statistics> ans = new LinkedList<>();
+        for (String areaCode : areaPool) {
+            statistics s = new statistics();
+            s.setAreaCode(areaCode);
+            s.setPatient(service1.countPatient(areaCode));
+            s.setPotential_patient(service1.countPotentialPatient(areaCode));
+            ans.add(s);
+        }
+        return ans;
+    }
 }
