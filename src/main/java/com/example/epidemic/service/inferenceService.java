@@ -23,7 +23,7 @@ public class inferenceService {
         return list;
     }
 
-    public patient getPatients(int patient_id) {
+    public patient getPatient(int patient_id) {
         patient p = mp1.queryPatientById(patient_id);
         return p;
     }

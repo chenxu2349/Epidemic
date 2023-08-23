@@ -87,4 +87,8 @@ public class relevanceService {
 
         return false;
     }
+
+    public List<contact> getPotentialPatient(int batch) {
+        return mp1.queryPotentialPatient(batch);
+    }
 }

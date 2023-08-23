@@ -28,4 +28,6 @@ public interface testMapper {
     void setPossibility(int contactId, double possibility);
 
     void setPotentialPatient(int contactId, int isPotential);
+
+    List<contact> queryPotentialPatient(int batch);
 }

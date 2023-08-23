@@ -133,4 +133,8 @@
         update contacts_info set potential_patient = #{isPotential}
         where contact_id = #{contactId}
     </update>
+
+    <select id="queryPotentialPatient" resultMap="com.example.epidemic.pojo.contact">
+        select * from contacts_info where potential_patient = 1 and batch = #{batch}
+    </select>
 </mapper>

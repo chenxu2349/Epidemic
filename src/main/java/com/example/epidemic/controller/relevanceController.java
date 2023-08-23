@@ -1,8 +1,6 @@
 package com.example.epidemic.controller;
 
-import com.example.epidemic.pojo.chain;
-import com.example.epidemic.pojo.patient;
-import com.example.epidemic.pojo.patientTrack;
+import com.example.epidemic.pojo.*;
 import com.example.epidemic.service.inferenceService;
 import com.example.epidemic.service.relevanceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +23,17 @@ public class relevanceController {
 
     @GetMapping("/relevance")
     @ResponseBody
-    public Map<Integer, List<patient>> relevanceAnalyse(@PathParam("date") String date, @PathParam("areaCode") String areaCode) throws ParseException {
+    public Map<Integer, List<patient>> relevanceAnalyse(@PathParam("date") String date) throws ParseException {
 
         // 该区域关联的全部传播链，map存某个id对应的感染者列表
         Map<Integer, List<patient>> chainList = new HashMap<>();
 
+        // 全部区域的患者
         List<patient> patients = new ArrayList<>();
-        for (patient p : inference_service.getPatients(date, areaCode)) patients.add(p);
+        String[] areaPool = new String[]{"10001","10002","10003","10004"};
+        for (String areaCode : areaPool) {
+            for (patient p : inference_service.getPatients(date, areaCode)) patients.add(p);
+        }
 
         Map<Integer, List<patientTrack>> ptMap = new HashMap<>();   // 这个人去过哪些地方
         Map<Integer, Integer> chainIdMap = new HashMap<>(); // 某个患者在哪个传播链id上
@@ -100,5 +102,66 @@ public class relevanceController {
         }
 
         return chainList;
+    }
+
+    // 从认定的潜在患者中(>=60%)筛选接触了多个感染者的重点对象
+    @GetMapping("/keyPersonFilter")
+    @ResponseBody
+    public List<contact> findKeyPerson(@PathParam("date") String date, @PathParam("batch") int batch) throws ParseException {
+
+        // 经推理认定的潜在患者
+        List<contact> potentialPatients = relevance_service.getPotentialPatient(batch);
+        Map<Integer, List<contactTrack>> ctMap = new HashMap<>();
+        for (contact c : potentialPatients) {
+            int cId = c.getContactId();
+            List<contactTrack> contactTracks = relevance_service.getContactTrackById(cId);
+            ctMap.put(cId, contactTracks);
+        }
+
+        // 全部区域的患者
+        List<patient> patients = new ArrayList<>();
+        Map<Integer, List<patientTrack>> ptMap = new HashMap<>();   // 这个人去过哪些地方
+        String[] areaPool = new String[]{"10001","10002","10003","10004"};
+        for (String areaCode : areaPool) {
+            for (patient p : inference_service.getPatients(date, areaCode)) patients.add(p);
+        }
+        for (patient p : patients) {
+            int pId = p.getPatientId();
+            List<patientTrack> patientTracks = relevance_service.getPatientTrackById(pId);
+            ptMap.put(pId, patientTracks);
+        }
+
+        // 筛查重点对象
+        List<contact> keyPersons = new LinkedList<>();
+        for (contact c : potentialPatients) {
+            int count = 0;
+            for (patient p : patients) {
+                if (relevance_service.checkTwoPerson(p, c)) {
+                    count++;
+                }
+                if (count >= 2) {
+                    keyPersons.add(c);
+                    break;
+                }
+            }
+        }
+
+        return keyPersons;
+    }
+
+    // 查看某个患者的接触者
+    @GetMapping("/getPotentialPatients")
+    @ResponseBody
+    public List<contact> getPotentialPatients(@PathParam("patient_id") int patient_id,
+                                              @PathParam("area_code")String area_code,
+                                              @PathParam("batch")int batch) {
+        List<contact> contacts = inference_service.getContacts(patient_id, area_code, batch);
+        List<contact> ans = new LinkedList<>();
+
+        for (contact c : contacts) {
+            if (c.getPotentialPatient() == 1) ans.add(c);
+        }
+
+        return ans;
     }
 }

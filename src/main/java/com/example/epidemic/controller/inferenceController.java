@@ -20,6 +20,7 @@ public class inferenceController {
     @Autowired
     private inferenceService service1;
 
+    // 查看某一天的患者
     @GetMapping("/getPatientsByDate")
     @ResponseBody
     public List<patient> getPatients(@PathParam("date") String date, @PathParam("areaCode") String areaCode) {
@@ -28,6 +29,7 @@ public class inferenceController {
         else return patients;
     }
 
+    // 查看某个患者的接触者
     @GetMapping("/findContacts")
     @ResponseBody
     public List<contact> getContacts(@PathParam("patient_id") int patient_id,
@@ -38,12 +40,13 @@ public class inferenceController {
         else return contacts;
     }
 
+    // 推理运算
     @GetMapping("/infer")
     @ResponseBody
     public List<contact> inference(@PathParam("patient_id") int patient_id,
                           @PathParam("area_code")String area_code,
                           @PathParam("batch")int batch) throws ParseException {
-        patient p = service1.getPatients(patient_id);
+        patient p = service1.getPatient(patient_id);
         List<contact> contacts = service1.getContacts(patient_id, area_code, batch);
         if (contacts.size() == 0) return null;
         else return service1.inference(p, contacts);
