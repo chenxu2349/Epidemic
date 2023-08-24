@@ -152,10 +152,13 @@ public class relevanceController {
     // 查看某个患者的接触者
     @GetMapping("/getPotentialPatients")
     @ResponseBody
-    public List<contact> getPotentialPatients(@PathParam("patient_id") int patient_id,
-                                              @PathParam("area_code")String area_code,
-                                              @PathParam("batch")int batch) {
-        List<contact> contacts = inference_service.getContacts(patient_id, area_code, batch);
+    public List<contact> getPotentialPatients(@PathParam("patient_id") int patient_id, @PathParam("batch")int batch) {
+
+        String[] areaPool = new String[]{"10001","10002","10003","10004"};
+        List<contact> contacts = new LinkedList<>();
+        for (String areaCode : areaPool) {
+            for (contact c : inference_service.getContacts(patient_id, areaCode, batch)) contacts.add(c);
+        }
         List<contact> ans = new LinkedList<>();
 
         for (contact c : contacts) {

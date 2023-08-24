@@ -23,8 +23,12 @@ public class inferenceController {
     // 查看某一天的患者
     @GetMapping("/getPatientsByDate")
     @ResponseBody
-    public List<patient> getPatients(@PathParam("date") String date, @PathParam("areaCode") String areaCode) {
-        List<patient> patients = service1.getPatients(date, areaCode);
+    public List<patient> getPatients(@PathParam("date") String date) {
+        String[] areaPool = new String[]{"10001","10002","10003","10004"};
+        List<patient> patients = new LinkedList<>();
+        for (String areaCode : areaPool) {
+            for (patient p : service1.getPatients(date, areaCode)) patients.add(p);
+        }
         if (patients.size() == 0) return null;
         else return patients;
     }
@@ -32,10 +36,12 @@ public class inferenceController {
     // 查看某个患者的接触者
     @GetMapping("/findContacts")
     @ResponseBody
-    public List<contact> getContacts(@PathParam("patient_id") int patient_id,
-                                     @PathParam("area_code")String area_code,
-                                     @PathParam("batch")int batch) {
-        List<contact> contacts = service1.getContacts(patient_id, area_code, batch);
+    public List<contact> getContacts(@PathParam("patient_id") int patient_id, @PathParam("batch")int batch) {
+        String[] areaPool = new String[]{"10001","10002","10003","10004"};
+        List<contact> contacts = new LinkedList<>();
+        for (String areaCode : areaPool) {
+            for (contact c : service1.getContacts(patient_id, areaCode, batch)) contacts.add(c);
+        }
         if (contacts.size() == 0) return null;
         else return contacts;
     }
@@ -43,11 +49,13 @@ public class inferenceController {
     // 推理运算
     @GetMapping("/infer")
     @ResponseBody
-    public List<contact> inference(@PathParam("patient_id") int patient_id,
-                          @PathParam("area_code")String area_code,
-                          @PathParam("batch")int batch) throws ParseException {
+    public List<contact> inference(@PathParam("patient_id") int patient_id, @PathParam("batch")int batch) throws ParseException {
         patient p = service1.getPatient(patient_id);
-        List<contact> contacts = service1.getContacts(patient_id, area_code, batch);
+        String[] areaPool = new String[]{"10001","10002","10003","10004"};
+        List<contact> contacts = new LinkedList<>();
+        for (String areaCode : areaPool) {
+            for (contact c : service1.getContacts(patient_id, areaCode, batch)) contacts.add(c);
+        }
         if (contacts.size() == 0) return null;
         else return service1.inference(p, contacts);
     }
