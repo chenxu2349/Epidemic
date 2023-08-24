@@ -23,7 +23,7 @@ public class relevanceController {
 
     @GetMapping("/relevance")
     @ResponseBody
-    public Map<Integer, List<patient>> relevanceAnalyse(@PathParam("date") String date) throws ParseException {
+    public List<relevanceChainPair> relevanceAnalyse(@PathParam("date") String date) throws ParseException {
 
         // 该区域关联的全部传播链，map存某个id对应的感染者列表
         Map<Integer, List<patient>> chainList = new HashMap<>();
@@ -39,6 +39,7 @@ public class relevanceController {
         Map<Integer, Integer> chainIdMap = new HashMap<>(); // 某个患者在哪个传播链id上
         Set<Integer> hasInChain = new HashSet<>();  // 已经在传播链中的人
 
+        // 填充每个人的行动轨迹
         for (patient p : patients) {
             int pId = p.getPatientId();
             List<patientTrack> pTrack = relevance_service.getPatientTrackById(pId);
@@ -56,10 +57,16 @@ public class relevanceController {
                     patient pj = patients.get(j);
                     if (relevance_service.checkTwoPerson(pi, pj) && hasInChain.contains(pj.getPatientId())) {
                         basicCheck = true;
-                        List<patient> list = chainList.get(chainIdMap.get(pj.getPatientId()));
+                        int cId = chainIdMap.get(pj.getPatientId());
+                        List<patient> list = chainList.get(cId);
                         list.add(pi);
-                        chainIdMap.put(pi.getPatientId(), chainIdMap.get(pj.getPatientId()));
+                        chainIdMap.put(pi.getPatientId(), cId);
                         hasInChain.add(pi.getPatientId());
+
+                        // 记录pair
+                        String areaCode = pi.getAreaCode();
+                        relevance_service.setChainPair(cId, areaCode, pi.getPatientId(), pj.getPatientId());
+                        relevance_service.setChainPair(cId, areaCode, pj.getPatientId(), pi.getPatientId());
                         break;
                     }
                 }
@@ -80,6 +87,11 @@ public class relevanceController {
                         list.add(pi);
                         chainIdMap.put(pj.getPatientId(), chainId);
                         hasInChain.add(pj.getPatientId());
+
+                        // 记录pair
+                        String areaCode = pi.getAreaCode();
+                        relevance_service.setChainPair(chainId, areaCode, pi.getPatientId(), pj.getPatientId());
+                        relevance_service.setChainPair(chainId, areaCode, pj.getPatientId(), pi.getPatientId());
                         break;
                     }
                 }
@@ -92,17 +104,24 @@ public class relevanceController {
                     patient pi = patients.get(i);
                     patient pj = patients.get(j);
                     if (relevance_service.checkTwoPerson(pi, pj) && !hasInChain.contains(pj.getPatientId())) {
+                        // 左边的i已经在链上，吸纳新成员j上链
                         List<patient> list = chainList.get(cId);
                         list.add(pj);
                         chainIdMap.put(pj.getPatientId(), chainIdMap.get(cId));
                         hasInChain.add(pj.getPatientId());
+
+                        // 记录pair
+                        String areaCode = pi.getAreaCode();
+                        relevance_service.setChainPair(cId, areaCode, pi.getPatientId(), pj.getPatientId());
+                        relevance_service.setChainPair(cId, areaCode, pj.getPatientId(), pi.getPatientId());
+
                         chainList.put(cId, list);
                     }
                 }
             }
         }
 
-        return chainList;
+        return relevance_service.getRelevanceChainPairs();
     }
 
     // 从认定的潜在患者中(>=60%)筛选接触了多个感染者的重点对象

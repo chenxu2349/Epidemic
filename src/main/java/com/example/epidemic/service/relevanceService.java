@@ -1,10 +1,8 @@
 package com.example.epidemic.service;
 
+import com.example.epidemic.mapper.chainMapper;
 import com.example.epidemic.mapper.testMapper;
-import com.example.epidemic.pojo.contact;
-import com.example.epidemic.pojo.contactTrack;
-import com.example.epidemic.pojo.patient;
-import com.example.epidemic.pojo.patientTrack;
+import com.example.epidemic.pojo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +15,9 @@ public class relevanceService {
 
     @Autowired
     private testMapper mp1;
+
+    @Autowired
+    private chainMapper mp2;
 
     public List<patientTrack> getPatientTrackById(int patient_id) {
         return mp1.queryPatientTrackById(patient_id);
@@ -90,5 +91,13 @@ public class relevanceService {
 
     public List<contact> getPotentialPatient(int batch) {
         return mp1.queryPotentialPatient(batch);
+    }
+
+    public List<relevanceChainPair> getRelevanceChainPairs() {
+        return mp2.queryRelevancePairs();
+    }
+
+    public void setChainPair(int id, String code, int pid1, int pid2) {
+        mp2.setRelevancePair(id, code, pid1, pid2);
     }
 }
