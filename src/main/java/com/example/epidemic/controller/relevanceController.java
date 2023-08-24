@@ -48,7 +48,6 @@ public class relevanceController {
         int chainId = 0;
         for (int i = 0; i < patients.size(); i++) {
             int iPid = patients.get(i).getPatientId();
-            List<patientTrack> iTracks = ptMap.get(iPid);
             if (!hasInChain.contains(iPid)) {
                 // 先向后找，有没有已经上链的且和i有时空交集的
                 boolean basicCheck = false;
@@ -79,12 +78,14 @@ public class relevanceController {
                     if (relevance_service.checkTwoPerson(pi, pj)) {
                         // 存在时空交集，患者j上链
                         list.add(pi);
-                        chainIdMap.put(pi.getPatientId(), chainId);
+                        chainIdMap.put(pj.getPatientId(), chainId);
                         hasInChain.add(pj.getPatientId());
                         break;
                     }
                 }
                 c.setChainPatients(list);
+                chainList.put(chainId, list);
+                chainId++;
             } else {
                 int cId = chainIdMap.get(iPid);
                 for (int j = i + 1; j < patients.size(); j++) {
