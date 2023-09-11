@@ -8,6 +8,7 @@ import com.example.epidemic.pojo.patientTrack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -36,7 +37,7 @@ public class inferenceService {
 
     public List<contact> inference(patient p, List<contact> contacts) throws ParseException {
         // 病人：接触地点人流量（密度、流动性），地点的温湿度
-        // 推理因子：口罩（两个人），接触时长，接触者是否打疫苗，接触者传染病史，心率，血压
+        // 推理因子：口罩（两个人），年龄，接触时长，接触者是否打疫苗，接触者传染病史，心率，血压
         List<patientTrack> patientTracks = mp1.queryPatientTrackById(p.getPatientId());
         // 按id记录每个接触者的累计分数和概率
         Map<Integer, Integer> contactPotentialPoints = new HashMap<>();
@@ -76,7 +77,7 @@ public class inferenceService {
                         else if (peopleDensity > 10 && peopleDensity <= 30) x3 = 0.5;
                         else x3 = 0.7;
 
-                        countPoint = (int)(110 * x1 + 120 * x2 + 90 * x3);
+                        countPoint = (int)(120 * x1 + 135 * x2 + 100 * x3);
                     }
                 }
                 contactPotentialPoints.put(c.getContactId(), contactPotentialPoints.get(c.getContactId()) + countPoint);
@@ -86,6 +87,8 @@ public class inferenceService {
         for (contact c : contacts) {
             int cId = c.getContactId();
             double potentialP = normalization(contactPotentialPoints.get(c.getContactId()), factors);
+            DecimalFormat df = new DecimalFormat("#.00");
+            potentialP = Double.valueOf(df.format(potentialP));
             contactPotentialPossibility.put(cId, potentialP);
             // 回写数据库
             c.setPotentialPatientProbability(potentialP);
@@ -140,12 +143,12 @@ public class inferenceService {
         else return point * 1.0 / (factors * 100);
     }
 
-    public int countPatient(String areaCode) {
-        return mp1.countPatient(areaCode);
+    public int countPatient(String areaCode, int batch) {
+        return mp1.countPatient(areaCode, batch);
     }
 
-    public int countPotentialPatient(String areaCode) {
-        return mp1.countPotentialPatient(areaCode);
+    public int countPotentialPatient(String areaCode, int batch) {
+        return mp1.countPotentialPatient(areaCode, batch);
     }
 
     public void setDatabase(int cId, double potentialP) {

@@ -23,17 +23,14 @@ public class relevanceController {
 
     @GetMapping("/relevance")
     @ResponseBody
-    public List<relevanceChainPair> relevanceAnalyse(@PathParam("date") String date) throws ParseException {
+    public List<relevanceChainPair> relevanceAnalyse(@PathParam("date") String date, @PathParam("areaCode") String areaCode) throws ParseException {
 
         // 该区域关联的全部传播链，map存某个id对应的感染者列表
         Map<Integer, List<patient>> chainList = new HashMap<>();
 
         // 全部区域的患者
         List<patient> patients = new ArrayList<>();
-        String[] areaPool = new String[]{"10001","10002","10003","10004"};
-        for (String areaCode : areaPool) {
-            for (patient p : inference_service.getPatients(date, areaCode)) patients.add(p);
-        }
+        for (patient p : inference_service.getPatients(date, areaCode)) patients.add(p);
 
         Map<Integer, List<patientTrack>> ptMap = new HashMap<>();   // 这个人去过哪些地方
         Map<Integer, Integer> chainIdMap = new HashMap<>(); // 某个患者在哪个传播链id上
@@ -64,9 +61,9 @@ public class relevanceController {
                         hasInChain.add(pi.getPatientId());
 
                         // 记录pair
-                        String areaCode = pi.getAreaCode();
-                        relevance_service.setChainPair(cId, areaCode, pi.getPatientId(), pj.getPatientId());
-                        relevance_service.setChainPair(cId, areaCode, pj.getPatientId(), pi.getPatientId());
+                        String areaCode1 = pi.getAreaCode();
+                        relevance_service.setChainPair(cId, areaCode1, pi.getPatientId(), pj.getPatientId());
+                        relevance_service.setChainPair(cId, areaCode1, pj.getPatientId(), pi.getPatientId());
                         break;
                     }
                 }
@@ -89,9 +86,9 @@ public class relevanceController {
                         hasInChain.add(pj.getPatientId());
 
                         // 记录pair
-                        String areaCode = pi.getAreaCode();
-                        relevance_service.setChainPair(chainId, areaCode, pi.getPatientId(), pj.getPatientId());
-                        relevance_service.setChainPair(chainId, areaCode, pj.getPatientId(), pi.getPatientId());
+                        String areaCode1 = pi.getAreaCode();
+                        relevance_service.setChainPair(chainId, areaCode1, pi.getPatientId(), pj.getPatientId());
+                        relevance_service.setChainPair(chainId, areaCode1, pj.getPatientId(), pi.getPatientId());
                         break;
                     }
                 }
@@ -111,9 +108,9 @@ public class relevanceController {
                         hasInChain.add(pj.getPatientId());
 
                         // 记录pair
-                        String areaCode = pi.getAreaCode();
-                        relevance_service.setChainPair(cId, areaCode, pi.getPatientId(), pj.getPatientId());
-                        relevance_service.setChainPair(cId, areaCode, pj.getPatientId(), pi.getPatientId());
+                        String areaCode1 = pi.getAreaCode();
+                        relevance_service.setChainPair(cId, areaCode1, pi.getPatientId(), pj.getPatientId());
+                        relevance_service.setChainPair(cId, areaCode1, pj.getPatientId(), pi.getPatientId());
 
                         chainList.put(cId, list);
                     }
@@ -127,10 +124,12 @@ public class relevanceController {
     // 从认定的潜在患者中(>=60%)筛选接触了多个感染者的重点对象
     @GetMapping("/keyPersonFilter")
     @ResponseBody
-    public List<contact> findKeyPerson(@PathParam("date") String date, @PathParam("batch") int batch) throws ParseException {
+    public List<contact> findKeyPerson(@PathParam("date") String date,
+                                       @PathParam("batch") int batch,
+                                       @PathParam("areaCode") String areaCode) throws ParseException {
 
         // 经推理认定的潜在患者
-        List<contact> potentialPatients = relevance_service.getPotentialPatient(batch);
+        List<contact> potentialPatients = relevance_service.getPotentialPatient(batch, areaCode);
         Map<Integer, List<contactTrack>> ctMap = new HashMap<>();
         for (contact c : potentialPatients) {
             int cId = c.getContactId();
@@ -141,10 +140,8 @@ public class relevanceController {
         // 全部区域的患者
         List<patient> patients = new ArrayList<>();
         Map<Integer, List<patientTrack>> ptMap = new HashMap<>();   // 这个人去过哪些地方
-        String[] areaPool = new String[]{"10001","10002","10003","10004"};
-        for (String areaCode : areaPool) {
-            for (patient p : inference_service.getPatients(date, areaCode)) patients.add(p);
-        }
+        // String[] areaPool = new String[]{"10001","10002","10003","10004"};
+        for (patient p : inference_service.getPatients(date, areaCode)) patients.add(p);
         for (patient p : patients) {
             int pId = p.getPatientId();
             List<patientTrack> patientTracks = relevance_service.getPatientTrackById(pId);
@@ -169,7 +166,7 @@ public class relevanceController {
         return keyPersons;
     }
 
-    // 查看某个患者的接触者
+    // 查看某个患者的潜在患者
     @GetMapping("/getPotentialPatients")
     @ResponseBody
     public List<contact> getPotentialPatients(@PathParam("patient_id") int patient_id, @PathParam("batch")int batch) {

@@ -89,13 +89,12 @@ public class relevanceService {
         return false;
     }
 
-    public List<contact> getPotentialPatient(int batch) {
-        return mp1.queryPotentialPatient(batch);
+    public List<contact> getPotentialPatient(int batch, String areaCode) {
+        return mp1.queryPotentialPatient(batch, areaCode);
     }
 
     public List<relevanceChainPair> getRelevanceChainPairs() {
-        return mp2.queryRelevancePairs();
-    }
+        return mp2.queryRelevancePairs();    }
 
     public void setChainPair(int id, String code, int pid1, int pid2) {
         mp2.setRelevancePair(id, code, pid1, pid2);

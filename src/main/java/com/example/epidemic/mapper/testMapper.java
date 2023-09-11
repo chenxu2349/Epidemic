@@ -21,13 +21,13 @@ public interface testMapper {
 
     area queryAreaPeopleDensity(int area_id);
 
-    int countPatient(String areaCode);
+    int countPatient(String areaCode, int batch);
 
-    int countPotentialPatient(String areaCode);
+    int countPotentialPatient(String areaCode, int batch);
 
     void setPossibility(int contactId, double possibility);
 
     void setPotentialPatient(int contactId, int isPotential);
 
-    List<contact> queryPotentialPatient(int batch);
+    List<contact> queryPotentialPatient(int batch, String areaCode);
 }

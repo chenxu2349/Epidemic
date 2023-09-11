@@ -21,14 +21,11 @@ public class inferenceController {
     private inferenceService service1;
 
     // 查看某一天的患者
-    @GetMapping("/getPatientsByDate")
+    @GetMapping("/getPatients")
     @ResponseBody
-    public List<patient> getPatients(@PathParam("date") String date) {
-        String[] areaPool = new String[]{"10001","10002","10003","10004"};
+    public List<patient> getPatients(@PathParam("date") String date, @PathParam("areaCode") String areaCode) {
         List<patient> patients = new LinkedList<>();
-        for (String areaCode : areaPool) {
-            for (patient p : service1.getPatients(date, areaCode)) patients.add(p);
-        }
+        for (patient p : service1.getPatients(date, areaCode)) patients.add(p);
         if (patients.size() == 0) return null;
         else return patients;
     }
@@ -60,17 +57,38 @@ public class inferenceController {
         else return service1.inference(p, contacts);
     }
 
+    // 推理全部患者的接触者概率，刷新数据库所有接触者患病概率
+    @GetMapping("/inferAll")
+    public void inferAll() throws ParseException {
+        int[] patientsIdPool = new int[]{10001, 10002, 10003, 10004, 10005};
+        String[] areaPool = new String[]{"10001","10002","10003","10004"};
+        for (int pId : patientsIdPool) {
+            patient p = service1.getPatient(pId);
+            List<contact> contacts = new LinkedList<>();
+            for (String areaCode : areaPool) {
+                for (int i = 1; i <= 3; i++) {
+                    for (contact c : service1.getContacts(pId, areaCode, i)) contacts.add(c);
+                }
+            }
+            service1.inference(p, contacts);
+        }
+    }
+
+    // 所有接触者概率清零
+    @GetMapping("/clearAll")
+    public void clearAll() {}
+
     // 统计各区域患者和潜在患者数量
     @GetMapping("/countPatientAndPotential")
     @ResponseBody
-    public List<statistics> areaCount() {
+    public List<statistics> areaCount(@PathParam("batch") int batch) {
         String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
         List<statistics> ans = new LinkedList<>();
         for (String areaCode : areaPool) {
             statistics s = new statistics();
             s.setAreaCode(areaCode);
-            s.setPatient(service1.countPatient(areaCode));
-            s.setPotential_patient(service1.countPotentialPatient(areaCode));
+            s.setPatient(service1.countPatient(areaCode, batch));
+            s.setPotential_patient(service1.countPotentialPatient(areaCode, batch));
             ans.add(s);
         }
         return ans;
