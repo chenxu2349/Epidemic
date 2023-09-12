@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.websocket.server.PathParam;
 import java.text.ParseException;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Controller
 public class relevanceController {
@@ -21,16 +22,22 @@ public class relevanceController {
     @Autowired
     private relevanceService relevance_service;
 
-    @GetMapping("/relevance")
+    @GetMapping("/relevanceAll")
     @ResponseBody
-    public List<relevanceChainPair> relevanceAnalyse(@PathParam("date") String date, @PathParam("areaCode") String areaCode) throws ParseException {
+    public void relevanceAnalyse() throws ParseException {
 
         // 该区域关联的全部传播链，map存某个id对应的感染者列表
         Map<Integer, List<patient>> chainList = new HashMap<>();
 
-        // 指定区域的患者
+        // 全部区域的患者
+        String[] datePool = new String[]{"2023-07-28", "2023-07-29", "2023-07-30"};
+        String[] areaPool = new String[]{"10001", "10002", "10003", "10004", "10005"};
         List<patient> patients = new ArrayList<>();
-        for (patient p : inference_service.getPatients(date, areaCode)) patients.add(p);
+        for (String date : datePool) {
+            for (String areaCode : areaPool) {
+                for (patient p : inference_service.getPatients(date, areaCode)) patients.add(p);
+            }
+        }
 
         Map<Integer, List<patientTrack>> ptMap = new HashMap<>();   // 这个人去过哪些地方
         Map<Integer, Integer> chainIdMap = new HashMap<>(); // 某个患者在哪个传播链id上
@@ -117,11 +124,11 @@ public class relevanceController {
                 }
             }
         }
+    }
 
-        int batch = 0;
-        if (date.equals("2023-07-28")) batch = 1;
-        else if (date.equals("2023-07-29")) batch = 2;
-        else batch = 3;
+    @GetMapping("getRelevanceChain")
+    @ResponseBody
+    public List<relevanceChainPair> getRelevanceChain(@PathParam("batch") int batch, @PathParam("areaCode") String areaCode) {
         return relevance_service.getRelevanceChainPairs(batch, areaCode);
     }
 

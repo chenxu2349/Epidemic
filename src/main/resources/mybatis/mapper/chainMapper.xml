@@ -13,9 +13,9 @@
 
     <select id="queryRelevancePairs" resultMap="RelevanceChainMap">
         select * from correlation_chain_info as cci, patients_info as pi
-        where cci.correlation_chain_code = #{areaCode} and pi.batch = #{batch}
+        where cci.correlation_chain_code = #{areaCode} and pi.batch = #{batch} and cci.patient_id1 = pi.patient_id
     </select>
-    
+
     <insert id="setRelevancePair">
         insert into correlation_chain_info values (default, #{id}, #{code}, #{pid1}, #{pid2});
     </insert>
