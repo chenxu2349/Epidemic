@@ -93,8 +93,9 @@ public class relevanceService {
         return mp1.queryPotentialPatient(batch, areaCode);
     }
 
-    public List<relevanceChainPair> getRelevanceChainPairs() {
-        return mp2.queryRelevancePairs();    }
+    public List<relevanceChainPair> getRelevanceChainPairs(int batch, String areaCode) {
+        return mp2.queryRelevancePairs(batch, areaCode);
+    }
 
     public void setChainPair(int id, String code, int pid1, int pid2) {
         mp2.setRelevancePair(id, code, pid1, pid2);

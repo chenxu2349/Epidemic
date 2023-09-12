@@ -28,7 +28,7 @@ public class relevanceController {
         // 该区域关联的全部传播链，map存某个id对应的感染者列表
         Map<Integer, List<patient>> chainList = new HashMap<>();
 
-        // 全部区域的患者
+        // 指定区域的患者
         List<patient> patients = new ArrayList<>();
         for (patient p : inference_service.getPatients(date, areaCode)) patients.add(p);
 
@@ -118,7 +118,11 @@ public class relevanceController {
             }
         }
 
-        return relevance_service.getRelevanceChainPairs();
+        int batch = 0;
+        if (date.equals("2023-07-28")) batch = 1;
+        else if (date.equals("2023-07-29")) batch = 2;
+        else batch = 3;
+        return relevance_service.getRelevanceChainPairs(batch, areaCode);
     }
 
     // 从认定的潜在患者中(>=60%)筛选接触了多个感染者的重点对象

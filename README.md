@@ -6,8 +6,11 @@ ddl: 2023-10
 统计区域患者和接触者
 http://localhost:8080/countPatientAndPotential?batch=2
 
-查找患者
+查找患者（某天某区域）
 http://localhost:8080/getPatients?date=2023-07-28&areaCode=10001
+
+查找患者（某天全部区域）
+http://localhost:8080/getPatientsByDate?date=2023-07-28
 
 查找某个患者的接触者
 http://localhost:8080/findContacts?patient_id=10001&batch=1

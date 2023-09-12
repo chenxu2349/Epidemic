@@ -30,6 +30,19 @@ public class inferenceController {
         else return patients;
     }
 
+    // 查看某一天全部区域的患者
+    @GetMapping("/getPatientsByDate")
+    @ResponseBody
+    public List<patient> getPatients(@PathParam("date") String date) {
+        List<patient> patients = new LinkedList<>();
+        String[] areaPool = new String[]{"10001","10002","10003","10004"};
+        for (String areaCode : areaPool) {
+            for (patient p : service1.getPatients(date, areaCode)) patients.add(p);
+        }
+        if (patients.size() == 0) return null;
+        else return patients;
+    }
+
     // 查看某个患者的接触者
     @GetMapping("/findContacts")
     @ResponseBody

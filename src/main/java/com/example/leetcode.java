@@ -754,14 +754,22 @@ package com.example;
 //where ci.BIRTH < '2000-01-01' and ca.DEPOSIT < 1000.00
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class leetcode {
-    static int T(int m){
-        System.out.println("1");
-        if(m<=3) return 1;
-        else return T(m-2)+T(m-4)+1;
-    }
 
     public static void main(String[] args) {
-        T(T(5));
+        Map<Integer, Integer> map = new HashMap<>(3);
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+        set0(map);
+        for (int k : map.keySet()) System.out.println(map.get(k));
+    }
+
+    public static void set0(Map<Integer, Integer> map) {
+        for (int k : map.keySet()) map.put(k, 0);
     }
 }
