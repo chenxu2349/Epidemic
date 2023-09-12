@@ -22,9 +22,13 @@ public class relevanceController {
     @Autowired
     private relevanceService relevance_service;
 
+    int count = 0;
+
     @GetMapping("/relevanceAll")
     @ResponseBody
     public void relevanceAnalyse() throws ParseException {
+
+        if (count >= 1) return;
 
         // 该区域关联的全部传播链，map存某个id对应的感染者列表
         Map<Integer, List<patient>> chainList = new HashMap<>();
@@ -124,6 +128,8 @@ public class relevanceController {
                 }
             }
         }
+
+        count++;
     }
 
     @GetMapping("getRelevanceChain")
