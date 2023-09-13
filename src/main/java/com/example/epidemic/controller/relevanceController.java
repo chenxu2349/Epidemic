@@ -134,8 +134,21 @@ public class relevanceController {
 
     @GetMapping("getRelevanceChain")
     @ResponseBody
-    public List<relevanceChainPair> getRelevanceChain(@PathParam("batch") int batch, @PathParam("areaCode") String areaCode) {
-        return relevance_service.getRelevanceChainPairs(batch, areaCode);
+    public List<relevanceChainPairWithName> getRelevanceChain(@PathParam("batch") int batch, @PathParam("areaCode") String areaCode) {
+        List<relevanceChainPairWithName> ans = new LinkedList<>();
+        for (relevanceChainPair p : relevance_service.getRelevanceChainPairs(batch, areaCode)) {
+            relevanceChainPairWithName pN = new relevanceChainPairWithName();
+            pN.setCorrelationChainId(p.getCorrelationChainId());
+            pN.setCorrelationChainCode(p.getCorrelationChainCode());
+            pN.setPatientId1(p.getPatientId1());
+            pN.setPatientId2(p.getPatientId2());
+            patient p1 = inference_service.getPatient(p.getPatientId1());
+            patient p2 = inference_service.getPatient(p.getPatientId2());
+            pN.setPatientName1(p1.getPatientName());
+            pN.setPatientName2(p2.getPatientName());
+            ans.add(pN);
+        }
+        return ans;
     }
 
     // 从认定的潜在患者中(>=60%)筛选接触了多个感染者的重点对象

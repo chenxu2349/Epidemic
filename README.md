@@ -19,7 +19,7 @@ http://localhost:8080/findContacts?patient_id=10001&batch=1
 http://localhost:8080/infer?patient_id=10001&batch=1
 
 关联分析（直接推算所有天和地区的传播链并存入数据库）
-http://localhost:8080/relevanceAll?date=2023-07-29&areaCode=10001
+http://localhost:8080/relevanceAll
 
 按天和地区查询传播链
 http://localhost:8080/getRelevanceChain?batch=1&areaCode=10001
