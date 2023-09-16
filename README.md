@@ -29,3 +29,8 @@ http://localhost:8080/keyPersonFilter?date=2023-07-30&batch=3&areaCode=10001
 
 查找某个患者的潜在患者
 http://localhost:8080/getPotentialPatients?patient_id=10001&batch=1
+
+清空接触者概率
+http://localhost:8080/clearAllPossibility
+
+清空传播链信息表

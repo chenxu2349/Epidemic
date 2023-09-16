@@ -4,10 +4,11 @@ public class sql1 {
     public static void main(String[] args) {
         // 常量池
         String[] firstName = new String[]{"赵", "钱", "王", "孙", "李", "周", "张", "陈", "方", "陶", "江", "杨", "沈", "韩", "楚", "秦"};
-        String[] lastName = new String[]{"强", "小红", "柏", "文", "子斌", "莎", "玉", "立国", "志强", "建国", "国庆", "弥", "歌", "鞍立",
-                "金阳", "平", "包林", "尼尼", "维强", "申堂", "树", "华清", "旭", "林木", "可欣", "柯", "胡云", "婷", "音茹", "余", "锦玉"};
-        String[] areaCode = new String[]{"10001", "10001", "10002", "10003", "10004","10001","10003","10003","10004","10001",
-                "10002","10004","10001","10004","10004",};
+        String[] lastName = new String[]{"强", "小红", "柏", "文", "子斌", "莎", "玉", "立国", "志强", "建国", "国庆", "弥", "歌", "国立",
+                "金阳", "平", "霖奔", "尼尼", "维强", "申堂", "树", "华清", "煦", "林木", "可欣", "柯", "胡云", "婷", "音茹", "余", "锦玉",
+                "家琪", "云飞", "天泽", "宾", "德义", "翰林", "磊", "鹏松", "安琪", "文锦"
+        };
+        String[] areaCode = new String[]{"10002", "10003", "10004", "10002", "10003","10004","10002","10003","10004"};
         String[] areaPool1 = new String[]{"合肥新桥国际机场", "蜀山森林公园", "安徽新华学院", "合肥汽车客运西站", "砂之船奥莱汉堡王", "中环城邻几便利店", "星达城麦当劳",
                 "华地润园小区", "莲花苑小区", "美的集团冰箱工业园"};
         String[] areaPool2 = new String[]{"万象汇万象影城", "万科广场星伦多自助料理", "庐州公园", "水木春城小区", "四泉花园小区", "合肥市长江路第二小学", "庐阳实验小学",
@@ -18,9 +19,8 @@ public class sql1 {
                 "花冲公园", "京东方科技集团", "合肥一六八中学"};
         String[] homePool = new String[]{"世贸翡翠首府", "融创城创泽园", "尚泽紫金公馆", "金水童话名苑", "锦秀大地城", "中环云邸", "世纪阳光花园紫阳苑",
                 "阳光汇景", "华夏阳府", "尚泽大都会", "悦洋华庭", "花都城市花园","新华庄园府","安尔乐居府","湖泊名城","蜀山龙湖和府","鑫仪御湖院"};
-        int[] patientsPool = new int[]{10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010, 10011, 10012,
-                10013, 10014, 10015};
-        int[] batchPool = new int[]{1,1,1,1,1,2,2,2,2,2,3,3,3,3,3};
+        int[] patientsPool = new int[]{10016,10017,10018,10019,10020,10021,10022,10023,10024};
+        int[] batchPool = new int[]{1,1,1,2,2,2,3,3,3};
         String[] vacPool = new String[]{"卡介苗", "甲型肝炎疫苗", "脊髓灰质炎疫苗", "麻疹疫苗", "乙型肝炎病毒疫苗", "脊髓灰质炎减毒活疫苗",
                 "乙脑减毒活疫苗", "新冠疫苗", "狂犬疫苗"};
         String[] illnessHistoryPool = new String[]{"慢性荨麻疹", "乙型肝炎", "新冠肺炎", "高血压", "糖尿病", "肺癌",
@@ -29,16 +29,16 @@ public class sql1 {
                 "3.1/1.8/1.3/2.3", "4.8/1.5/1.8/2.8", "3.4/1.2/1.6/2.1", "3.3/1.4/1.4/2.5", "4.2/0.6/1.9/3.0", "3.2/1.6/1.8/2.4"};
 
         int patient_index = -1;
-        for (int i = 0; i < 75; i++) {
+        for (int i = 0; i < 45; i++) {
             // int seed3 = (int)(min + Math.random()*(max - min + 1));
             // SQL头
             String sql = "INSERT INTO `contacts_info` VALUES (";
 
             // id
-            int id = 20001 + i; sql += id; sql += ",";
+            int id = 20076 + i; sql += id; sql += ",";
 
             // name
-            int seed1 = (int)(0 + Math.random()*(15 - 0 + 1)), seed2 = (int)(0 + Math.random()*(30 - 0 + 1));
+            int seed1 = (int)(0 + Math.random()*(15 - 0 + 1)), seed2 = (int)(0 + Math.random()*(40 - 0 + 1));
             String name = firstName[seed1] + lastName[seed2]; sql += "'"; sql += name; sql += "'"; sql += ",";
 
             // patient_id
@@ -78,16 +78,6 @@ public class sql1 {
             // heart_rate
             sql += "default"; sql += ",";
             // blood_pressure
-            sql += "default"; sql += ",";
-            // blood_glucose
-            sql += "default"; sql += ",";
-            // blood_fat
-            sql += "default"; sql += ",";
-            // body_temperature
-            sql += "default"; sql += ",";
-            // hemoglobin
-            sql += "default"; sql += ",";
-            // vital_capacity
             sql += "default"; sql += ",";
             // batch
             sql += batchPool[patient_index];

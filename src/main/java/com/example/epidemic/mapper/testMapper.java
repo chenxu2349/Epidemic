@@ -30,4 +30,6 @@ public interface testMapper {
     void setPotentialPatient(int contactId, int isPotential);
 
     List<contact> queryPotentialPatient(int batch, String areaCode);
+
+    void clearAllPossibility();
 }

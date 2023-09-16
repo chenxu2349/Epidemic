@@ -155,4 +155,8 @@ public class inferenceService {
         if (potentialP >= 0.6) mp1.setPotentialPatient(cId, 1);
         mp1.setPossibility(cId, potentialP);
     }
+
+    public void clearAllPossibility() {
+        mp1.clearAllPossibility();
+    }
 }

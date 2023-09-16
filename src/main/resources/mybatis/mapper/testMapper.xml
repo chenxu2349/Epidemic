@@ -137,4 +137,10 @@
     <select id="queryPotentialPatient" resultMap="ContactMap">
         select * from contacts_info where potential_patient = 1 and batch = #{batch} and area_code = #{areaCode}
     </select>
+
+    <update id="clearAllPossibility">
+        update contacts_info
+        set potential_patient_probability = 0, potential_patient = 0
+        where potential_patient_probability >= 0
+    </update>
 </mapper>

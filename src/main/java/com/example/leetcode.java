@@ -754,22 +754,62 @@ package com.example;
 //where ci.BIRTH < '2000-01-01' and ca.DEPOSIT < 1000.00
 
 
-import java.util.HashMap;
-import java.util.Map;
+//import java.util.HashMap;
+//import java.util.Map;
+//
+//public class leetcode {
+//
+//    public static void main(String[] args) {
+//        Map<Integer, Integer> map = new HashMap<>(3);
+//        map.put(1, 1);
+//        map.put(2, 2);
+//        map.put(3, 3);
+//        map.put(4, 4);
+//        set0(map);
+//        for (int k : map.keySet()) System.out.println(map.get(k));
+//    }
+//
+//    public static void set0(Map<Integer, Integer> map) {
+//        for (int k : map.keySet()) map.put(k, 0);
+//    }
+//}
 
 public class leetcode {
+    public static int minCandies(int[] scores) {
+        int n = scores.length;
+        int[] candies = new int[n];
 
-    public static void main(String[] args) {
-        Map<Integer, Integer> map = new HashMap<>(3);
-        map.put(1, 1);
-        map.put(2, 2);
-        map.put(3, 3);
-        map.put(4, 4);
-        set0(map);
-        for (int k : map.keySet()) System.out.println(map.get(k));
+        // 初始时，每个人都分发一个玩偶
+        for (int i = 0; i < n; i++) {
+            candies[i] = 1;
+        }
+
+        // 从左到右遍历，保证得分较高的人获得更多玩偶
+        for (int i = 1; i < n; i++) {
+            if (scores[i] > scores[i - 1]) {
+                candies[i] = candies[i - 1] + 1;
+            }
+        }
+
+        // 从右到左遍历，再次确保得分较高的人获得更多玩偶
+        for (int i = n - 2; i >= 0; i--) {
+            if (scores[i] > scores[i + 1] && candies[i] <= candies[i + 1]) {
+                candies[i] = candies[i + 1] + 1;
+            }
+        }
+
+        // 计算总共需要的玩偶数量
+        int totalCandies = 0;
+        for (int candy : candies) {
+            totalCandies += candy;
+        }
+
+        return totalCandies;
     }
 
-    public static void set0(Map<Integer, Integer> map) {
-        for (int k : map.keySet()) map.put(k, 0);
+    public static void main(String[] args) {
+        int[] scores = {1, 1, 2, 4, 4};
+        int minimumCandies = minCandies(scores);
+        System.out.println("最少需要的玩偶数量为：" + minimumCandies);
     }
 }

@@ -35,7 +35,7 @@ public class relevanceController {
 
         // 全部区域的患者
         String[] datePool = new String[]{"2023-07-28", "2023-07-29", "2023-07-30"};
-        String[] areaPool = new String[]{"10001", "10002", "10003", "10004", "10005"};
+        String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
         List<patient> patients = new ArrayList<>();
         for (String date : datePool) {
             for (String areaCode : areaPool) {
@@ -68,6 +68,7 @@ public class relevanceController {
                         int cId = chainIdMap.get(pj.getPatientId());
                         List<patient> list = chainList.get(cId);
                         list.add(pi);
+                        chainList.put(cId, list);
                         chainIdMap.put(pi.getPatientId(), cId);
                         hasInChain.add(pi.getPatientId());
 
@@ -92,7 +93,7 @@ public class relevanceController {
                     patient pj = patients.get(j);
                     if (relevance_service.checkTwoPerson(pi, pj)) {
                         // 存在时空交集，患者j上链
-                        list.add(pi);
+                        list.add(pj);
                         chainIdMap.put(pj.getPatientId(), chainId);
                         hasInChain.add(pj.getPatientId());
 
@@ -115,7 +116,7 @@ public class relevanceController {
                         // 左边的i已经在链上，吸纳新成员j上链
                         List<patient> list = chainList.get(cId);
                         list.add(pj);
-                        chainIdMap.put(pj.getPatientId(), chainIdMap.get(cId));
+                        chainIdMap.put(pj.getPatientId(), cId);
                         hasInChain.add(pj.getPatientId());
 
                         // 记录pair

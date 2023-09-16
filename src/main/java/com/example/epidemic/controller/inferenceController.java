@@ -88,8 +88,10 @@ public class inferenceController {
     }
 
     // 所有接触者概率清零
-    @GetMapping("/clearAll")
-    public void clearAll() {}
+    @GetMapping("/clearAllPossibility")
+    public void clearAll() {
+        service1.clearAllPossibility();
+    }
 
     // 统计各区域患者和潜在患者数量
     @GetMapping("/countPatientAndPotential")
