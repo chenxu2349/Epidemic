@@ -774,42 +774,116 @@ package com.example;
 //    }
 //}
 
+//public class leetcode {
+//    public static int minCandies(int[] scores) {
+//        int n = scores.length;
+//        int[] candies = new int[n];
+//
+//        // 初始时，每个人都分发一个玩偶
+//        for (int i = 0; i < n; i++) {
+//            candies[i] = 1;
+//        }
+//
+//        // 从左到右遍历，保证得分较高的人获得更多玩偶
+//        for (int i = 1; i < n; i++) {
+//            if (scores[i] > scores[i - 1]) {
+//                candies[i] = candies[i - 1] + 1;
+//            }
+//        }
+//
+//        // 从右到左遍历，再次确保得分较高的人获得更多玩偶
+//        for (int i = n - 2; i >= 0; i--) {
+//            if (scores[i] > scores[i + 1] && candies[i] <= candies[i + 1]) {
+//                candies[i] = candies[i + 1] + 1;
+//            }
+//        }
+//
+//        // 计算总共需要的玩偶数量
+//        int totalCandies = 0;
+//        for (int candy : candies) {
+//            totalCandies += candy;
+//        }
+//
+//        return totalCandies;
+//    }
+//
+//    public static void main(String[] args) {
+//        int[] scores = {1, 1, 2, 4, 4};
+//        int minimumCandies = minCandies(scores);
+//        System.out.println("最少需要的玩偶数量为：" + minimumCandies);
+//    }
+//}
+
+
+//public class leetcode {
+//    public static int countSubsequences(String sequence, String pattern) {
+//        int m = pattern.length();
+//        int n = sequence.length();
+//
+//        // 创建一个二维数组dp，dp[i][j]表示pattern的前i个字符在sequence的前j个字符中出现的次数
+//        int[][] dp = new int[m + 1][n + 1];
+//
+//        // 初始化dp数组
+//        for (int i = 0; i <= n; i++) {
+//            dp[0][i] = 1; // 空模式是任何序列的子序列，出现1次
+//        }
+//
+//        // 填充dp数组
+//        for (int i = 1; i <= m; i++) {
+//            for (int j = 1; j <= n; j++) {
+//                if (pattern.charAt(i - 1) == sequence.charAt(j - 1)) {
+//                    dp[i][j] = dp[i - 1][j - 1] + dp[i][j - 1];
+//                } else {
+//                    dp[i][j] = dp[i][j - 1];
+//                }
+//            }
+//        }
+//
+//        return dp[m][n];
+//    }
+//
+//    public static void main(String[] args) {
+//        String sequence = "AABCCD";
+//        String pattern = "CCD";
+//        int count = countSubsequences(sequence, pattern);
+//        System.out.println("子序列出现的次数：" + count);
+//    }
+//}
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 public class leetcode {
-    public static int minCandies(int[] scores) {
-        int n = scores.length;
-        int[] candies = new int[n];
+    public static int maxFrequency(int[] nums, int k) {
+        // 将数组进行排序
+        Arrays.sort(nums);
 
-        // 初始时，每个人都分发一个玩偶
-        for (int i = 0; i < n; i++) {
-            candies[i] = 1;
-        }
+        int maxFrequency = 0; // 最大重复次数
+        int left = 0; // 滑动窗口的左边界
+        long sum = 0; // 滑动窗口内的数字和
 
-        // 从左到右遍历，保证得分较高的人获得更多玩偶
-        for (int i = 1; i < n; i++) {
-            if (scores[i] > scores[i - 1]) {
-                candies[i] = candies[i - 1] + 1;
+        for (int right = 0; right < nums.length; right++) {
+            // 计算滑动窗口内的数字和
+            sum += nums[right];
+
+            // 如果滑动窗口内的元素无法在一次操作内变为连续整数序列，缩小窗口
+            while ((long)(nums[right]) * (right - left + 1) > sum + k) {
+                sum -= nums[left];
+                left++;
             }
+
+            // 更新最大重复次数
+            maxFrequency = Math.max(maxFrequency, right - left + 1);
         }
 
-        // 从右到左遍历，再次确保得分较高的人获得更多玩偶
-        for (int i = n - 2; i >= 0; i--) {
-            if (scores[i] > scores[i + 1] && candies[i] <= candies[i + 1]) {
-                candies[i] = candies[i + 1] + 1;
-            }
-        }
-
-        // 计算总共需要的玩偶数量
-        int totalCandies = 0;
-        for (int candy : candies) {
-            totalCandies += candy;
-        }
-
-        return totalCandies;
+        return maxFrequency;
     }
 
     public static void main(String[] args) {
-        int[] scores = {1, 1, 2, 4, 4};
-        int minimumCandies = minCandies(scores);
-        System.out.println("最少需要的玩偶数量为：" + minimumCandies);
+        int[] nums = {4,6,1,2};
+        int k = 2;
+        int maxScore = maxFrequency(nums, k);
+        System.out.println("最大可能分数：" + maxScore);
     }
 }
