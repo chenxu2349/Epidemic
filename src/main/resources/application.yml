@@ -14,6 +14,7 @@ spring:
 #    url: jdbc:mysql://114.213.213.163:3306/epidemic?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
 #    username: awen
 #    password: 123456
+#    test
 
 mybatis:
   #  mapper???????
