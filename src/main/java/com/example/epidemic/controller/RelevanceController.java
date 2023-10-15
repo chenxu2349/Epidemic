@@ -11,10 +11,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.websocket.server.PathParam;
 import java.text.ParseException;
 import java.util.*;
-import java.util.stream.Stream;
 
 @Controller
-public class relevanceController {
+public class RelevanceController {
 
     @Autowired
     private inferenceService inference_service;

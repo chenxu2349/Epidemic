@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class helloController {
+public class HelloController {
 
     @Autowired
     private testMapper mp1;

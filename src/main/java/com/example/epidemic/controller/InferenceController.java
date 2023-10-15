@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Controller
-public class inferenceController {
+public class InferenceController {
 
     @Autowired
     private inferenceService service1;
