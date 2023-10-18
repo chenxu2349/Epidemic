@@ -1,6 +1,6 @@
 package com.example.epidemic.pojo;
 
-public class patient {
+public class Patient {
     private int patientId;
 
     private int epidemicId;

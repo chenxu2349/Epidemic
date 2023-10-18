@@ -1,7 +1,7 @@
 package com.example.epidemic.service;
 
-import com.example.epidemic.mapper.chainMapper;
-import com.example.epidemic.mapper.testMapper;
+import com.example.epidemic.mapper.ChainMapper;
+import com.example.epidemic.mapper.TestMapper;
 import com.example.epidemic.pojo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,45 +11,45 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Service
-public class relevanceService {
+public class RelevanceService {
 
     @Autowired
-    private testMapper mp1;
+    private TestMapper mp1;
 
     @Autowired
-    private chainMapper mp2;
+    private ChainMapper mp2;
 
-    public List<patientTrack> getPatientTrackById(int patient_id) {
+    public List<PatientTrack> getPatientTrackById(int patient_id) {
         return mp1.queryPatientTrackById(patient_id);
     }
 
-    public List<contactTrack> getContactTrackById(int contact_id) {
+    public List<ContactTrack> getContactTrackById(int contact_id) {
         return mp1.queryContactTrackById(contact_id);
     }
 
-    public boolean checkTwoPerson(patient p1, patient p2) throws ParseException {
-        List<patientTrack> p1Tracks = getPatientTrackById(p1.getPatientId());
-        List<patientTrack> p2Tracks = getPatientTrackById(p2.getPatientId());
-        for (patientTrack pt1 : p1Tracks) {
-            for (patientTrack pt2 : p2Tracks) {
+    public boolean checkTwoPerson(Patient p1, Patient p2) throws ParseException {
+        List<PatientTrack> p1Tracks = getPatientTrackById(p1.getPatientId());
+        List<PatientTrack> p2Tracks = getPatientTrackById(p2.getPatientId());
+        for (PatientTrack pt1 : p1Tracks) {
+            for (PatientTrack pt2 : p2Tracks) {
                 if (checkTimeAndZoneContact(pt1, pt2)) return true;
             }
         }
         return false;
     }
 
-    public boolean checkTwoPerson(patient p1, contact p2) throws ParseException {
-        List<patientTrack> p1Tracks = getPatientTrackById(p1.getPatientId());
-        List<patientTrack> p2Tracks = getPatientTrackById(p2.getPatientId());
-        for (patientTrack pt1 : p1Tracks) {
-            for (patientTrack pt2 : p2Tracks) {
+    public boolean checkTwoPerson(Patient p1, Contact p2) throws ParseException {
+        List<PatientTrack> p1Tracks = getPatientTrackById(p1.getPatientId());
+        List<PatientTrack> p2Tracks = getPatientTrackById(p2.getPatientId());
+        for (PatientTrack pt1 : p1Tracks) {
+            for (PatientTrack pt2 : p2Tracks) {
                 if (checkTimeAndZoneContact(pt1, pt2)) return true;
             }
         }
         return false;
     }
 
-    public boolean checkTimeAndZoneContact(patientTrack pt, contactTrack ct) throws ParseException {
+    public boolean checkTimeAndZoneContact(PatientTrack pt, ContactTrack ct) throws ParseException {
         if (pt.getAreaId() != ct.getAreaId()) return false;
 
         // String类型转为日期类型比较
@@ -69,7 +69,7 @@ public class relevanceService {
         return false;
     }
 
-    public boolean checkTimeAndZoneContact(patientTrack pt, patientTrack ct) throws ParseException {
+    public boolean checkTimeAndZoneContact(PatientTrack pt, PatientTrack ct) throws ParseException {
         if (pt.getAreaId() != ct.getAreaId()) return false;
 
         // String类型转为日期类型比较
@@ -89,11 +89,11 @@ public class relevanceService {
         return false;
     }
 
-    public List<contact> getPotentialPatient(int batch, String areaCode) {
+    public List<Contact> getPotentialPatient(int batch, String areaCode) {
         return mp1.queryPotentialPatient(batch, areaCode);
     }
 
-    public List<relevanceChainPair> getRelevanceChainPairs(int batch, String areaCode) {
+    public List<RelevanceChainPair> getRelevanceChainPairs(int batch, String areaCode) {
         return mp2.queryRelevancePairs(batch, areaCode);
     }
 

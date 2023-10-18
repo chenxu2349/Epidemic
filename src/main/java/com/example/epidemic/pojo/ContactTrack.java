@@ -1,9 +1,9 @@
 package com.example.epidemic.pojo;
 
-public class patientTrack {
-    private int patientTrackId;
+public class ContactTrack {
+    private int contactsTrackId;
 
-    private int patientId;
+    private int contactId;
 
     private int areaId;
 
@@ -17,20 +17,20 @@ public class patientTrack {
 
     private double humidness;
 
-    public int getPatientTrackId() {
-        return patientTrackId;
+    public int getContactsTrackId() {
+        return contactsTrackId;
     }
 
-    public void setPatientTrackId(int patientTrackId) {
-        this.patientTrackId = patientTrackId;
+    public void setContactsTrackId(int contactsTrackId) {
+        this.contactsTrackId = contactsTrackId;
     }
 
-    public int getPatientId() {
-        return patientId;
+    public int getContactId() {
+        return contactId;
     }
 
-    public void setPatientId(int patientId) {
-        this.patientId = patientId;
+    public void setContactId(int contactId) {
+        this.contactId = contactId;
     }
 
     public int getAreaId() {
@@ -83,9 +83,9 @@ public class patientTrack {
 
     @Override
     public String toString() {
-        return "patientTrack{" +
-                "patientTrackId=" + patientTrackId +
-                ", patientId=" + patientId +
+        return "contactTrack{" +
+                "contactsTrackId=" + contactsTrackId +
+                ", contactId=" + contactId +
                 ", areaId=" + areaId +
                 ", startTime='" + startTime + '\'' +
                 ", endTime='" + endTime + '\'' +

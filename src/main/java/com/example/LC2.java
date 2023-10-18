@@ -123,40 +123,78 @@ package com.example;
 //    }
 //}
 
-import java.util.*;
+//import java.util.*;
+//
+//class LC2{
+//    public static void main(String arg[]){
+//        Scanner sc = new Scanner(System.in);
+//        String input = sc.nextLine();
+//        String[] date = input.split(",");
+//        int year = Integer.parseInt(date[0]);
+//        int month = Integer.parseInt(date[1]);
+//        int day = Integer.parseInt(date[2]);
+//
+//        int dayofyear = calculate(year,month,day);
+//        System.out.println(dayofyear);
+//        sc.close();
+//        int i = 10;
+//        do {
+//            i /= 2;
+//        }while (i > 1);
+//        System.out.println(i);
+//    }
+//    public static int calculate( int year, int month, int day){
+//        int[] daysinmonth = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+//        int dayofyear = 0;
+//        for(int i = 1; i < month; i++){
+//            dayofyear += daysinmonth[i];
+//        }
+//        if(isRun(year) && month > 2){
+//            dayofyear++;
+//        }
+//        dayofyear += day;
+//        return dayofyear;
+//    }
+//
+//    public static boolean isRun(int year){
+//        return(year % 4 == 0 && year % 100 != 0 && year % 400 == 0);
+//    }
+//}
 
-class LC2{
-    public static void main(String arg[]){
-        Scanner sc = new Scanner(System.in);
-        String input = sc.nextLine();
-        String[] date = input.split(",");
-        int year = Integer.parseInt(date[0]);
-        int month = Integer.parseInt(date[1]);
-        int day = Integer.parseInt(date[2]);
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 
-        int dayofyear = calculate(year,month,day);
-        System.out.println(dayofyear);
-        sc.close();
-        int i = 10;
-        do {
-            i /= 2;
-        }while (i > 1);
-        System.out.println(i);
-    }
-    public static int calculate( int year, int month, int day){
-        int[] daysinmonth = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-        int dayofyear = 0;
-        for(int i = 1; i < month; i++){
-            dayofyear += daysinmonth[i];
+class LC2 {
+    public static long maxKelements(int[] nums, int k) {
+        long ans = 0;
+        PriorityQueue<Integer> bigHeap = new PriorityQueue<>((o1, o2) -> (o2 - o1));
+        for (int t : nums) bigHeap.offer(t);
+        while (k > 0) {
+            int t = bigHeap.poll();
+            ans += t;
+            t = (int)Math.ceil((double) t / 3);
+            bigHeap.offer(t);
+            k--;
         }
-        if(isRun(year) && month > 2){
-            dayofyear++;
-        }
-        dayofyear += day;
-        return dayofyear;
+        return ans;
     }
-
-    public static boolean isRun(int year){
-        return(year % 4 == 0 && year % 100 != 0 && year % 400 == 0);
+    public static void main(String[] args) {
+        int[] nums = new int[]{1,10,3,3,3};
+        System.out.println(maxKelements(nums, 3));
+        System.out.println("------------------------");
+        PriorityQueue<Integer> bigHeap = new PriorityQueue<>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o2 - o1;
+            }
+        });
+        bigHeap.offer(1);
+        bigHeap.offer(2);
+        bigHeap.offer(3);
+        bigHeap.offer(4);
+        bigHeap.offer(5);
+        System.out.println(bigHeap.peek());
+        System.out.println(bigHeap.size());
     }
 }

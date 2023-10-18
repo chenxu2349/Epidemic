@@ -1,7 +1,7 @@
 package com.example.epidemic.pojo;
 
 // 各个区域的患者和潜在患者的统计信息
-public class statistics {
+public class Statistics {
     private String areaCode;
 
     private int patient;

@@ -2,10 +2,10 @@ package com.example.epidemic.pojo;
 
 import java.util.List;
 
-public class chain {
+public class Chain {
     private int chainId;
 
-    private List<patient> chainPatients;
+    private List<Patient> chainPatients;
 
     public int getChainId() {
         return chainId;
@@ -15,11 +15,11 @@ public class chain {
         this.chainId = chainId;
     }
 
-    public List<patient> getChainPatients() {
+    public List<Patient> getChainPatients() {
         return chainPatients;
     }
 
-    public void setChainPatients(List<patient> chainPatients) {
+    public void setChainPatients(List<Patient> chainPatients) {
         this.chainPatients = chainPatients;
     }
 

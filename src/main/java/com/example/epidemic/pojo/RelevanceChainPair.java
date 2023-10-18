@@ -1,6 +1,6 @@
 package com.example.epidemic.pojo;
 
-public class relevanceChainPair {
+public class RelevanceChainPair {
 
     private int correlationChainId;
 

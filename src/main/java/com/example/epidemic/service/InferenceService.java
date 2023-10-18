@@ -1,10 +1,10 @@
 package com.example.epidemic.service;
 
-import com.example.epidemic.mapper.testMapper;
-import com.example.epidemic.pojo.contact;
-import com.example.epidemic.pojo.contactTrack;
-import com.example.epidemic.pojo.patient;
-import com.example.epidemic.pojo.patientTrack;
+import com.example.epidemic.mapper.TestMapper;
+import com.example.epidemic.pojo.Contact;
+import com.example.epidemic.pojo.ContactTrack;
+import com.example.epidemic.pojo.Patient;
+import com.example.epidemic.pojo.PatientTrack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,44 +14,44 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
-public class inferenceService {
+public class InferenceService {
     @Autowired
-    private testMapper mp1;
+    private TestMapper mp1;
 
-    public List<patient> getPatients(String date, String areaCode) {
-        List<patient> list = new LinkedList<>();
-        for (patient p : mp1.queryPatientsByDate(date, areaCode)) list.add(p);
+    public List<Patient> getPatients(String date, String areaCode) {
+        List<Patient> list = new LinkedList<>();
+        for (Patient p : mp1.queryPatientsByDate(date, areaCode)) list.add(p);
         return list;
     }
 
-    public patient getPatient(int patient_id) {
-        patient p = mp1.queryPatientById(patient_id);
+    public Patient getPatient(int patient_id) {
+        Patient p = mp1.queryPatientById(patient_id);
         return p;
     }
 
-    public List<contact> getContacts(int patient_id, String area_code, int batch) {
-        List<contact> list = new LinkedList<>();
-        for (contact c : mp1.queryContacts(patient_id, area_code, batch)) list.add(c);
+    public List<Contact> getContacts(int patient_id, String area_code, int batch) {
+        List<Contact> list = new LinkedList<>();
+        for (Contact c : mp1.queryContacts(patient_id, area_code, batch)) list.add(c);
         return list;
     }
 
-    public List<contact> inference(patient p, List<contact> contacts) throws ParseException {
+    public List<Contact> inference(Patient p, List<Contact> contacts) throws ParseException {
         // 病人：接触地点人流量（密度、流动性），地点的温湿度
         // 推理因子：口罩（两个人），年龄，接触时长，接触者是否打疫苗，接触者传染病史，心率，血压
-        List<patientTrack> patientTracks = mp1.queryPatientTrackById(p.getPatientId());
+        List<PatientTrack> patientTracks = mp1.queryPatientTrackById(p.getPatientId());
         // 按id记录每个接触者的累计分数和概率
         Map<Integer, Integer> contactPotentialPoints = new HashMap<>();
         Map<Integer, Double> contactPotentialPossibility = new HashMap<>();
-        for (contact c : contacts) {
+        for (Contact c : contacts) {
             contactPotentialPoints.put(c.getContactId(), 0);
             contactPotentialPossibility.put(c.getContactId(), 0.0);
         }
         int factors = 3;
-        for (patientTrack pt : patientTracks) {
-            for (contact c : contacts) {
+        for (PatientTrack pt : patientTracks) {
+            for (Contact c : contacts) {
                 int countPoint = 0;
-                List<contactTrack> contactTracks = mp1.queryContactTrackById(c.getContactId());
-                for (contactTrack ct : contactTracks) {
+                List<ContactTrack> contactTracks = mp1.queryContactTrackById(c.getContactId());
+                for (ContactTrack ct : contactTracks) {
                     // 患者和接触者出现在同一个区域（时空交集）才会推理概率
                     if (pt.getAreaId() == ct.getAreaId()) {
                         int contactTime = contactTime(pt.getStartTime(), pt.getEndTime(), ct.getStartTime(), ct.getEndTime());
@@ -84,7 +84,7 @@ public class inferenceService {
             }
         }
         // 得到每个接触者患病概率，并且更新数据
-        for (contact c : contacts) {
+        for (Contact c : contacts) {
             int cId = c.getContactId();
             double potentialP = normalization(contactPotentialPoints.get(c.getContactId()), factors);
             DecimalFormat df = new DecimalFormat("#.00");

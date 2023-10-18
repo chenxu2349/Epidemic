@@ -1,6 +1,6 @@
 package com.example.epidemic.pojo;
 
-public class area {
+public class Area {
     private int areaId;
 
     private String areaCode;

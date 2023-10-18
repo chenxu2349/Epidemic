@@ -1,8 +1,8 @@
 package com.example.epidemic.controller;
 
 import com.example.epidemic.pojo.*;
-import com.example.epidemic.service.inferenceService;
-import com.example.epidemic.service.relevanceService;
+import com.example.epidemic.service.InferenceService;
+import com.example.epidemic.service.RelevanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,10 +16,10 @@ import java.util.*;
 public class RelevanceController {
 
     @Autowired
-    private inferenceService inference_service;
+    private InferenceService inference_service;
 
     @Autowired
-    private relevanceService relevance_service;
+    private RelevanceService relevance_service;
 
     int count = 0;
 
@@ -30,26 +30,26 @@ public class RelevanceController {
         if (count >= 1) return;
 
         // 该区域关联的全部传播链，map存某个id对应的感染者列表
-        Map<Integer, List<patient>> chainList = new HashMap<>();
+        Map<Integer, List<Patient>> chainList = new HashMap<>();
 
         // 全部区域的患者
         String[] datePool = new String[]{"2023-07-28", "2023-07-29", "2023-07-30"};
         String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
-        List<patient> patients = new ArrayList<>();
+        List<Patient> patients = new ArrayList<>();
         for (String date : datePool) {
             for (String areaCode : areaPool) {
-                for (patient p : inference_service.getPatients(date, areaCode)) patients.add(p);
+                for (Patient p : inference_service.getPatients(date, areaCode)) patients.add(p);
             }
         }
 
-        Map<Integer, List<patientTrack>> ptMap = new HashMap<>();   // 这个人去过哪些地方
+        Map<Integer, List<PatientTrack>> ptMap = new HashMap<>();   // 这个人去过哪些地方
         Map<Integer, Integer> chainIdMap = new HashMap<>(); // 某个患者在哪个传播链id上
         Set<Integer> hasInChain = new HashSet<>();  // 已经在传播链中的人
 
         // 填充每个人的行动轨迹
-        for (patient p : patients) {
+        for (Patient p : patients) {
             int pId = p.getPatientId();
-            List<patientTrack> pTrack = relevance_service.getPatientTrackById(pId);
+            List<PatientTrack> pTrack = relevance_service.getPatientTrackById(pId);
             ptMap.put(pId, pTrack);
         }
 
@@ -60,12 +60,12 @@ public class RelevanceController {
                 // 先向后找，有没有已经上链的且和i有时空交集的
                 boolean basicCheck = false;
                 for (int j = i + 1; j < patients.size(); j++) {
-                    patient pi = patients.get(i);
-                    patient pj = patients.get(j);
+                    Patient pi = patients.get(i);
+                    Patient pj = patients.get(j);
                     if (relevance_service.checkTwoPerson(pi, pj) && hasInChain.contains(pj.getPatientId())) {
                         basicCheck = true;
                         int cId = chainIdMap.get(pj.getPatientId());
-                        List<patient> list = chainList.get(cId);
+                        List<Patient> list = chainList.get(cId);
                         list.add(pi);
                         chainList.put(cId, list);
                         chainIdMap.put(pi.getPatientId(), cId);
@@ -80,16 +80,16 @@ public class RelevanceController {
                 }
                 if (basicCheck) continue;
 
-                chain c = new chain();
+                Chain c = new Chain();
                 c.setChainId(chainId);
-                List<patient> list = new LinkedList<>();
+                List<Patient> list = new LinkedList<>();
                 list.add(patients.get(i));
                 chainIdMap.put(iPid, chainId);
                 hasInChain.add(iPid);
                 // 向后匹配
                 for (int j = i + 1; j < patients.size(); j++) {
-                    patient pi = patients.get(i);
-                    patient pj = patients.get(j);
+                    Patient pi = patients.get(i);
+                    Patient pj = patients.get(j);
                     if (relevance_service.checkTwoPerson(pi, pj)) {
                         // 存在时空交集，患者j上链
                         list.add(pj);
@@ -109,11 +109,11 @@ public class RelevanceController {
             } else {
                 int cId = chainIdMap.get(iPid);
                 for (int j = i + 1; j < patients.size(); j++) {
-                    patient pi = patients.get(i);
-                    patient pj = patients.get(j);
+                    Patient pi = patients.get(i);
+                    Patient pj = patients.get(j);
                     if (relevance_service.checkTwoPerson(pi, pj) && !hasInChain.contains(pj.getPatientId())) {
                         // 左边的i已经在链上，吸纳新成员j上链
-                        List<patient> list = chainList.get(cId);
+                        List<Patient> list = chainList.get(cId);
                         list.add(pj);
                         chainIdMap.put(pj.getPatientId(), cId);
                         hasInChain.add(pj.getPatientId());
@@ -134,16 +134,16 @@ public class RelevanceController {
 
     @GetMapping("getRelevanceChain")
     @ResponseBody
-    public List<relevanceChainPairWithName> getRelevanceChain(@PathParam("batch") int batch, @PathParam("areaCode") String areaCode) {
-        List<relevanceChainPairWithName> ans = new LinkedList<>();
-        for (relevanceChainPair p : relevance_service.getRelevanceChainPairs(batch, areaCode)) {
-            relevanceChainPairWithName pN = new relevanceChainPairWithName();
+    public List<RelevanceChainPairWithName> getRelevanceChain(@PathParam("batch") int batch, @PathParam("areaCode") String areaCode) {
+        List<RelevanceChainPairWithName> ans = new LinkedList<>();
+        for (RelevanceChainPair p : relevance_service.getRelevanceChainPairs(batch, areaCode)) {
+            RelevanceChainPairWithName pN = new RelevanceChainPairWithName();
             pN.setCorrelationChainId(p.getCorrelationChainId());
             pN.setCorrelationChainCode(p.getCorrelationChainCode());
             pN.setPatientId1(p.getPatientId1());
             pN.setPatientId2(p.getPatientId2());
-            patient p1 = inference_service.getPatient(p.getPatientId1());
-            patient p2 = inference_service.getPatient(p.getPatientId2());
+            Patient p1 = inference_service.getPatient(p.getPatientId1());
+            Patient p2 = inference_service.getPatient(p.getPatientId2());
             pN.setPatientName1(p1.getPatientName());
             pN.setPatientName2(p2.getPatientName());
             ans.add(pN);
@@ -154,35 +154,35 @@ public class RelevanceController {
     // 从认定的潜在患者中(>=60%)筛选接触了多个感染者的重点对象
     @GetMapping("/keyPersonFilter")
     @ResponseBody
-    public List<contact> findKeyPerson(@PathParam("date") String date,
+    public List<Contact> findKeyPerson(@PathParam("date") String date,
                                        @PathParam("batch") int batch,
                                        @PathParam("areaCode") String areaCode) throws ParseException {
 
         // 经推理认定的潜在患者
-        List<contact> potentialPatients = relevance_service.getPotentialPatient(batch, areaCode);
-        Map<Integer, List<contactTrack>> ctMap = new HashMap<>();
-        for (contact c : potentialPatients) {
+        List<Contact> potentialPatients = relevance_service.getPotentialPatient(batch, areaCode);
+        Map<Integer, List<ContactTrack>> ctMap = new HashMap<>();
+        for (Contact c : potentialPatients) {
             int cId = c.getContactId();
-            List<contactTrack> contactTracks = relevance_service.getContactTrackById(cId);
+            List<ContactTrack> contactTracks = relevance_service.getContactTrackById(cId);
             ctMap.put(cId, contactTracks);
         }
 
         // 全部区域的患者
-        List<patient> patients = new ArrayList<>();
-        Map<Integer, List<patientTrack>> ptMap = new HashMap<>();   // 这个人去过哪些地方
+        List<Patient> patients = new ArrayList<>();
+        Map<Integer, List<PatientTrack>> ptMap = new HashMap<>();   // 这个人去过哪些地方
         // String[] areaPool = new String[]{"10001","10002","10003","10004"};
-        for (patient p : inference_service.getPatients(date, areaCode)) patients.add(p);
-        for (patient p : patients) {
+        for (Patient p : inference_service.getPatients(date, areaCode)) patients.add(p);
+        for (Patient p : patients) {
             int pId = p.getPatientId();
-            List<patientTrack> patientTracks = relevance_service.getPatientTrackById(pId);
+            List<PatientTrack> patientTracks = relevance_service.getPatientTrackById(pId);
             ptMap.put(pId, patientTracks);
         }
 
         // 筛查重点对象
-        List<contact> keyPersons = new LinkedList<>();
-        for (contact c : potentialPatients) {
+        List<Contact> keyPersons = new LinkedList<>();
+        for (Contact c : potentialPatients) {
             int count = 0;
-            for (patient p : patients) {
+            for (Patient p : patients) {
                 if (relevance_service.checkTwoPerson(p, c)) {
                     count++;
                 }
@@ -199,16 +199,16 @@ public class RelevanceController {
     // 查看某个患者的潜在患者
     @GetMapping("/getPotentialPatients")
     @ResponseBody
-    public List<contact> getPotentialPatients(@PathParam("patient_id") int patient_id, @PathParam("batch")int batch) {
+    public List<Contact> getPotentialPatients(@PathParam("patient_id") int patient_id, @PathParam("batch")int batch) {
 
         String[] areaPool = new String[]{"10001","10002","10003","10004"};
-        List<contact> contacts = new LinkedList<>();
+        List<Contact> contacts = new LinkedList<>();
         for (String areaCode : areaPool) {
-            for (contact c : inference_service.getContacts(patient_id, areaCode, batch)) contacts.add(c);
+            for (Contact c : inference_service.getContacts(patient_id, areaCode, batch)) contacts.add(c);
         }
-        List<contact> ans = new LinkedList<>();
+        List<Contact> ans = new LinkedList<>();
 
-        for (contact c : contacts) {
+        for (Contact c : contacts) {
             if (c.getPotentialPatient() == 1) ans.add(c);
         }
 

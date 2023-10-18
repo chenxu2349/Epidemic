@@ -1,7 +1,7 @@
 package com.example.epidemic.test;
 
 
-import com.example.epidemic.service.inferenceService;
+import com.example.epidemic.service.InferenceService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class spring {
 
     @Autowired
-    private inferenceService service1;
+    private InferenceService service1;
 
     @Test
     public void print() {

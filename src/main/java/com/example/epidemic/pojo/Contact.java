@@ -1,6 +1,6 @@
 package com.example.epidemic.pojo;
 
-public class contact {
+public class Contact {
     private int contactId;
 
     private String contactName;

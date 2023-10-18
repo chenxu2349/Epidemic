@@ -1,6 +1,6 @@
 package com.example.epidemic.pojo;
 
-public class relevanceChainPairWithName extends relevanceChainPair{
+public class RelevanceChainPairWithName extends RelevanceChainPair {
     private String patientName1;
 
     private String patientName2;
