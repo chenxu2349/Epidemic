@@ -33,4 +33,11 @@ http://localhost:8080/getPotentialPatients?patient_id=10001&batch=1
 清空接触者概率
 http://localhost:8080/clearAllPossibility
 
-清空传播链信息表
+插入患者表单
+http://localhost:8080/patient
+
+插入接触者表单
+http://localhost:8080/contact
+
+趋势预测(如果全市，就把10002替换成all)
+http://localhost:8080/forecast?areaCode=10002&batch=1
