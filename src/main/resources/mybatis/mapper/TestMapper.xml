@@ -86,11 +86,7 @@
     <select id="queryPatientsByDate" resultMap="PatientMap">
         select *
         from patients_info as pi
-        where pi.patient_id in(
-                  select distinct(pti.patient_id) from patients_track_info as pti
-                  where DATE_FORMAT(pti.end_time,'%Y-%m-%d') >= DATE_FORMAT(#{date},'%Y-%m-%d')
-                        and DATE_FORMAT(pti.start_time,'%Y-%m-%d') &lt;= DATE_FORMAT(#{date},'%Y-%m-%d')
-        ) and pi.area_code = #{areaCode}
+        where pi.batch = #{batch} and pi.area_code = #{areaCode}
     </select>
 
     <select id="queryContacts" resultMap="ContactMap">

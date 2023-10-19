@@ -13,7 +13,7 @@ public interface TestMapper {
 
     int queryPatientByName(String patientName);
 
-    List<Patient> queryPatientsByDate(String date, String areaCode);
+    List<Patient> queryPatientsByDate(int batch, String areaCode);
 
     List<Contact> queryContacts(int patient_id, String area_code, int batch);
 

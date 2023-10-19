@@ -26,9 +26,9 @@ public class InferenceController {
     // 查看某一天的患者
     @GetMapping("/getPatients")
     @ResponseBody
-    public List<Patient> getPatients(@PathParam("date") String date, @PathParam("areaCode") String areaCode) {
+    public List<Patient> getPatients(@PathParam("batch") int batch, @PathParam("areaCode") String areaCode) {
         List<Patient> patients = new LinkedList<>();
-        for (Patient p : inferenceService.getPatients(date, areaCode)) patients.add(p);
+        for (Patient p : inferenceService.getPatients(batch, areaCode)) patients.add(p);
         if (patients.size() == 0) return null;
         else return patients;
     }
@@ -36,11 +36,11 @@ public class InferenceController {
     // 查看某一天全部区域的患者
     @GetMapping("/getPatientsByDate")
     @ResponseBody
-    public List<Patient> getPatients(@PathParam("date") String date) {
+    public List<Patient> getPatients(@PathParam("batch") int batch) {
         List<Patient> patients = new LinkedList<>();
         String[] areaPool = new String[]{"10001","10002","10003","10004"};
         for (String areaCode : areaPool) {
-            for (Patient p : inferenceService.getPatients(date, areaCode)) patients.add(p);
+            for (Patient p : inferenceService.getPatients(batch, areaCode)) patients.add(p);
         }
         if (patients.size() == 0) return null;
         else return patients;
@@ -114,15 +114,16 @@ public class InferenceController {
 
     // 趋势预测，预测后两天的患者和潜在患者数量
     @GetMapping("/forecast")
-    public Map<Integer, int[]> trendForecast(@RequestParam("areaCode") String areCode, @RequestParam("batch") int batch) {
+    @ResponseBody
+    public Map<Integer, int[]> trendForecast(@RequestParam("areaCode") String areaCode, @RequestParam("batch") int batch) {
         Map<Integer, int[]> map = new HashMap<>();
         // 今天，明天，后天预测数据(患者，潜在患者)
-        if (areCode.equals("all")) {
+        if (areaCode.equals("all")) {
             String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
             int p = 0, pp = 0;
-            for (String areaCode : areaPool) {
-                p += inferenceService.countPatient(areaCode, batch);
-                pp += inferenceService.countPotentialPatient(areaCode, batch);
+            for (String areaCode1 : areaPool) {
+                p += inferenceService.countPatient(areaCode1, batch);
+                pp += inferenceService.countPotentialPatient(areaCode1, batch);
             }
             int seed1 = (int)(-3 + Math.random()*(3 - (-3) + 1));
             int seed2 = (int)(-3 + Math.random()*(3 - (-3) + 1));
@@ -135,8 +136,8 @@ public class InferenceController {
             map.put(1, arr1);
             map.put(2, arr2);
         } else {
-            int p = inferenceService.countPatient(areCode, batch);
-            int pp = inferenceService.countPotentialPatient(areCode, batch);
+            int p = inferenceService.countPatient(areaCode, batch);
+            int pp = inferenceService.countPotentialPatient(areaCode, batch);
             int seed1 = (int)(-3 + Math.random()*(3 - (-3) + 1));
             int seed2 = (int)(-3 + Math.random()*(3 - (-3) + 1));
             int seed3 = (int)(-3 + Math.random()*(3 - (-3) + 1));

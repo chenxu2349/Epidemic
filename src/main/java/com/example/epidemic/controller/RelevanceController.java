@@ -33,10 +33,10 @@ public class RelevanceController {
         Map<Integer, List<Patient>> chainList = new HashMap<>();
 
         // 全部区域的患者
-        String[] datePool = new String[]{"2023-07-28", "2023-07-29", "2023-07-30"};
+        int[] datePool = new int[]{1, 2, 3};
         String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
         List<Patient> patients = new ArrayList<>();
-        for (String date : datePool) {
+        for (int date : datePool) {
             for (String areaCode : areaPool) {
                 for (Patient p : inference_service.getPatients(date, areaCode)) patients.add(p);
             }
@@ -154,8 +154,7 @@ public class RelevanceController {
     // 从认定的潜在患者中(>=60%)筛选接触了多个感染者的重点对象
     @GetMapping("/keyPersonFilter")
     @ResponseBody
-    public List<Contact> findKeyPerson(@PathParam("date") String date,
-                                       @PathParam("batch") int batch,
+    public List<Contact> findKeyPerson(@PathParam("batch") int batch,
                                        @PathParam("areaCode") String areaCode) throws ParseException {
 
         // 经推理认定的潜在患者
@@ -171,7 +170,7 @@ public class RelevanceController {
         List<Patient> patients = new ArrayList<>();
         Map<Integer, List<PatientTrack>> ptMap = new HashMap<>();   // 这个人去过哪些地方
         // String[] areaPool = new String[]{"10001","10002","10003","10004"};
-        for (Patient p : inference_service.getPatients(date, areaCode)) patients.add(p);
+        for (Patient p : inference_service.getPatients(batch, areaCode)) patients.add(p);
         for (Patient p : patients) {
             int pId = p.getPatientId();
             List<PatientTrack> patientTracks = relevance_service.getPatientTrackById(pId);

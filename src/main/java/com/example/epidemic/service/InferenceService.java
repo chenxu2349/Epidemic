@@ -18,9 +18,9 @@ public class InferenceService {
     @Autowired
     private TestMapper mp1;
 
-    public List<Patient> getPatients(String date, String areaCode) {
+    public List<Patient> getPatients(int batch, String areaCode) {
         List<Patient> list = new LinkedList<>();
-        for (Patient p : mp1.queryPatientsByDate(date, areaCode)) list.add(p);
+        for (Patient p : mp1.queryPatientsByDate(batch, areaCode)) list.add(p);
         return list;
     }
 
