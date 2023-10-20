@@ -9,6 +9,9 @@ import java.util.List;
 @Mapper
 @Repository
 public interface TestMapper {
+
+    List<Patient> getAllPatients();
+
     Patient queryPatientById(int patient_id);
 
     int queryPatientByName(String patientName);

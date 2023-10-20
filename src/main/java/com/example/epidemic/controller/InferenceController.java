@@ -75,23 +75,27 @@ public class InferenceController {
 
     // 推理全部患者的接触者概率，刷新数据库所有接触者患病概率
     @GetMapping("/inferAll")
+    @ResponseBody
     public void inferAll() throws ParseException {
-        int[] patientsIdPool = new int[]{10001, 10002, 10003, 10004, 10005};
+        List<Patient> allPatients = inferenceService.getAllPatients();
         String[] areaPool = new String[]{"10001","10002","10003","10004"};
-        for (int pId : patientsIdPool) {
-            Patient p = inferenceService.getPatient(pId);
+        for (Patient p : allPatients) {
             List<Contact> contacts = new LinkedList<>();
             for (String areaCode : areaPool) {
-                for (int i = 1; i <= 3; i++) {
-                    for (Contact c : inferenceService.getContacts(pId, areaCode, i)) contacts.add(c);
+                for (int batch = 1; batch <= 3; batch++) {
+                    // 获取这一天这个地区的该患者的所有接触者
+                    for (Contact c : inferenceService.getContacts(p.getPatientId(), areaCode, batch)) contacts.add(c);
+
+                    // 推理
+                    inferenceService.inference(p, contacts);
                 }
             }
-            inferenceService.inference(p, contacts);
         }
     }
 
     // 所有接触者概率清零
     @GetMapping("/clearAllPossibility")
+    @ResponseBody
     public void clearAll() {
         inferenceService.clearAllPossibility();
     }

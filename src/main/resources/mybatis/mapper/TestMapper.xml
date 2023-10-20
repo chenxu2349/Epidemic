@@ -78,6 +78,11 @@
         <result column="population_mobility" property="populationMobility"></result>
     </resultMap>
 
+    <select id="getAllPatients" resultMap="PatientMap">
+        select *
+        from patients_info;
+    </select>
+
     <select id="queryPatientById" resultMap="PatientMap">
         select * from patients_info
         where patient_id = #{patient_id}
