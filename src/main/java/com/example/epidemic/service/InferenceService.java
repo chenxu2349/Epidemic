@@ -46,7 +46,8 @@ public class InferenceService {
             contactPotentialPoints.put(c.getContactId(), 0);
             contactPotentialPossibility.put(c.getContactId(), 0.0);
         }
-        int factors = 3;
+        // 影响因子个数
+        int factors = 6;
         for (PatientTrack pt : patientTracks) {
             for (Contact c : contacts) {
                 int countPoint = 0;
@@ -54,22 +55,29 @@ public class InferenceService {
                 for (ContactTrack ct : contactTracks) {
                     // 患者和接触者出现在同一个区域（时空交集）才会推理概率
                     if (pt.getAreaId() == ct.getAreaId()) {
+
+                        // 影响因子
                         int contactTime = contactTime(pt.getStartTime(), pt.getEndTime(), ct.getStartTime(), ct.getEndTime());
                         int maskSituation = maskSituation(pt.getMask(), ct.getMask());
                         double peopleDensity = mp1.queryAreaPeopleDensity(pt.getAreaId()).getPopulationDensity();
-                        double x1 = 0, x2 = 0, x3 = 0;
+                        int contactAge = c.getContactAge();
+                        int contactSex = c.getContactSex();
+                        int contactOfVaccinations = c.getContactOfVaccinations();
+
+                        // 影响因子权重系数
+                        double x1 = 0.0, x2 = 0.0, x3 = 0.0, x4 = 0.0, x5 = 0.0, x6 = 0.0;
 
                         // x1
-                        if (contactTime == 0) x1 = 0.1;
-                        else if (contactTime > 0 && contactTime <= 30) x1 = 0.3;
-                        else if (contactTime > 30 && contactTime <= 60) x1 = 0.5;
-                        else x1 = 0.7;
+                        if (contactTime == 0) x1 = System.currentTimeMillis() % 2 == 0 ? 0.1 : 0.15;
+                        else if (contactTime > 0 && contactTime <= 30) x1 = System.currentTimeMillis() % 2 == 0 ? 0.3 : 0.35;
+                        else if (contactTime > 30 && contactTime <= 60) x1 = System.currentTimeMillis() % 2 == 0 ? 0.5 : 0.55;
+                        else x1 = System.currentTimeMillis() % 2 == 0 ? 0.7 : 0.75;
 
                         // x2
                         switch (maskSituation) {
-                            case 1 : x2 = 0.1; break;
-                            case 3 : x2 = 0.4; break;
-                            case 9 : x2 = 0.8; break;
+                            case 1 : x2 = System.currentTimeMillis() % 2 == 0 ? 0.1 : 0.15; break;
+                            case 3 : x2 = System.currentTimeMillis() % 2 == 0 ? 0.4 : 0.45; break;
+                            case 9 : x2 = System.currentTimeMillis() % 2 == 0 ? 0.8 : 0.85; break;
                         }
 
                         // x3
@@ -77,7 +85,24 @@ public class InferenceService {
                         else if (peopleDensity > 10 && peopleDensity <= 30) x3 = 0.5;
                         else x3 = 0.7;
 
-                        countPoint = (int)(120 * x1 + 135 * x2 + 100 * x3);
+                        // x4
+                        if (contactAge < 10) x4 = System.currentTimeMillis() % 2 == 0 ? 0.6 : 0.65;
+                        else if (contactAge >= 10 && contactAge < 25) x4 = System.currentTimeMillis() % 2 == 0 ? 0.3 : 0.35;
+                        else if (contactAge >= 25 && contactAge < 55) x4 = System.currentTimeMillis() % 2 == 0 ? 0.28 : 0.32;
+                        else if (contactAge >= 55 && contactAge < 75) x4 = System.currentTimeMillis() % 2 == 0 ? 0.57 : 0.63;
+                        else x4 = System.currentTimeMillis() % 2 == 0 ? 0.73 : 0.8;
+
+                        // x5
+                        if (contactSex == 1) x5 = System.currentTimeMillis() % 2 == 0 ? 0.4 : 0.45;
+                        else x5 = System.currentTimeMillis() % 2 == 0 ? 0.6 : 0.65;
+
+                        // x6
+                        if (contactOfVaccinations == 1) x6 = System.currentTimeMillis() % 2 == 0 ? 0.23 : 0.3;
+                        else x6 = System.currentTimeMillis() % 2 == 0 ? 0.5 : 0.55;
+
+                        if (System.currentTimeMillis() % 3 == 0) countPoint = (int)(120 * x1 + 135 * x2 + 100 * x3 + 85 * x4 + 105 * x5 + 90 * x6);
+                        else if (System.currentTimeMillis() % 3 == 1) countPoint = (int)(110 * x1 + 125 * x2 + 105 * x3 + 90 * x4 + 100 * x5 + 95 * x6);
+                        else countPoint = (int)(115 * x1 + 132 * x2 + 108 * x3 + 87 * x4 + 125 * x5 + 87 * x6);
                     }
                 }
                 contactPotentialPoints.put(c.getContactId(), contactPotentialPoints.get(c.getContactId()) + countPoint);
@@ -136,9 +161,9 @@ public class InferenceService {
         int max = factors * 100;
         int seed = (int)(0 + Math.random()*(2 - 0 + 1));
         if (point >= max) {
-            if (seed == 0) return 0.99;
-            else if (seed == 1) return 0.98;
-            else return 0.97;
+            if (seed == 0) return 0.97;
+            else if (seed == 1) return 0.96;
+            else return 0.95;
         }
         else return point * 1.0 / (factors * 100);
     }

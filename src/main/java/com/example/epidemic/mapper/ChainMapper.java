@@ -11,4 +11,6 @@ public interface ChainMapper {
     List<RelevanceChainPair> queryRelevancePairs(int batch, String areaCode);
 
     void setRelevancePair(int id, String code, int pid1, int pid2);
+
+    void clearChainInfo();
 }

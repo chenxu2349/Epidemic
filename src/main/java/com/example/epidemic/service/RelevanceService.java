@@ -14,17 +14,17 @@ import java.util.List;
 public class RelevanceService {
 
     @Autowired
-    private TestMapper mp1;
+    private TestMapper testMapper;
 
     @Autowired
-    private ChainMapper mp2;
+    private ChainMapper chainMapper;
 
     public List<PatientTrack> getPatientTrackById(int patient_id) {
-        return mp1.queryPatientTrackById(patient_id);
+        return testMapper.queryPatientTrackById(patient_id);
     }
 
     public List<ContactTrack> getContactTrackById(int contact_id) {
-        return mp1.queryContactTrackById(contact_id);
+        return testMapper.queryContactTrackById(contact_id);
     }
 
     public boolean checkTwoPerson(Patient p1, Patient p2) throws ParseException {
@@ -90,14 +90,24 @@ public class RelevanceService {
     }
 
     public List<Contact> getPotentialPatient(int batch, String areaCode) {
-        return mp1.queryPotentialPatient(batch, areaCode);
+        return testMapper.queryPotentialPatient(batch, areaCode);
     }
 
     public List<RelevanceChainPair> getRelevanceChainPairs(int batch, String areaCode) {
-        return mp2.queryRelevancePairs(batch, areaCode);
+        return chainMapper.queryRelevancePairs(batch, areaCode);
     }
 
     public void setChainPair(int id, String code, int pid1, int pid2) {
-        mp2.setRelevancePair(id, code, pid1, pid2);
+        chainMapper.setRelevancePair(id, code, pid1, pid2);
+    }
+
+    public String clearChainInfo() {
+        try {
+            chainMapper.clearChainInfo();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "clear failed!";
+        }
+        return "clear success";
     }
 }

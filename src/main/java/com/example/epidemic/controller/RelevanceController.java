@@ -21,13 +21,16 @@ public class RelevanceController {
     @Autowired
     private RelevanceService relevance_service;
 
-    int count = 0;
+//    int count = 0;
 
+    // 关联分析
     @GetMapping("/relevanceAll")
     @ResponseBody
     public void relevanceAnalyse() throws ParseException {
 
-        if (count >= 1) return;
+//        if (count >= 1) return;
+
+        relevance_service.clearChainInfo();
 
         // 该区域关联的全部传播链，map存某个id对应的感染者列表
         Map<Integer, List<Patient>> chainList = new HashMap<>();
@@ -129,9 +132,10 @@ public class RelevanceController {
             }
         }
 
-        count++;
+//        count++;
     }
 
+    // 查询传播链
     @GetMapping("getRelevanceChain")
     @ResponseBody
     public List<RelevanceChainPairWithName> getRelevanceChain(@PathParam("batch") int batch, @PathParam("areaCode") String areaCode) {

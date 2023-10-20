@@ -20,4 +20,8 @@
         insert into correlation_chain_info values (default, #{id}, #{code}, #{pid1}, #{pid2});
     </insert>
 
+    <update id="clearChainInfo">
+        truncate table correlation_chain_info;
+    </update>
+
 </mapper>
