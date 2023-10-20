@@ -121,34 +121,35 @@ public class InferenceController {
     @ResponseBody
     public Map<Integer, int[]> trendForecast(@RequestParam("areaCode") String areaCode, @RequestParam("batch") int batch) {
         Map<Integer, int[]> map = new HashMap<>();
+        String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
+        double[] randomPool = new double[]{1.1, 1.2, 1.3};
         // 今天，明天，后天预测数据(患者，潜在患者)
         if (areaCode.equals("all")) {
-            String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
             int p = 0, pp = 0;
             for (String areaCode1 : areaPool) {
                 p += inferenceService.countPatient(areaCode1, batch);
                 pp += inferenceService.countPotentialPatient(areaCode1, batch);
             }
-            int seed1 = (int)(-3 + Math.random()*(3 - (-3) + 1));
-            int seed2 = (int)(-3 + Math.random()*(3 - (-3) + 1));
-            int seed3 = (int)(-3 + Math.random()*(3 - (-3) + 1));
-            int seed4 = (int)(-3 + Math.random()*(3 - (-3) + 1));
+            int seed1 = (int)(0 + Math.random()*(2 - 0 + 1));
+            int seed2 = (int)(0 + Math.random()*(2 - 0 + 1));
+            int seed3 = (int)(0 + Math.random()*(2 - 0 + 1));
+            int seed4 = (int)(0 + Math.random()*(2 - 0 + 1));
             int[] arr0 = new int[]{p, pp};
-            int[] arr1 = new int[]{p + seed1, pp + seed2};
-            int[] arr2 = new int[]{p + seed3, pp + seed4};
+            int[] arr1 = new int[]{(int) (p * randomPool[seed1]), (int) (pp * randomPool[seed2])};
+            int[] arr2 = new int[]{(int) (p * randomPool[seed3]), (int) (pp * randomPool[seed4])};
             map.put(0, arr0);
             map.put(1, arr1);
             map.put(2, arr2);
         } else {
             int p = inferenceService.countPatient(areaCode, batch);
             int pp = inferenceService.countPotentialPatient(areaCode, batch);
-            int seed1 = (int)(-3 + Math.random()*(3 - (-3) + 1));
-            int seed2 = (int)(-3 + Math.random()*(3 - (-3) + 1));
-            int seed3 = (int)(-3 + Math.random()*(3 - (-3) + 1));
-            int seed4 = (int)(-3 + Math.random()*(3 - (-3) + 1));
+            int seed1 = (int)(0 + Math.random()*(2 - 0 + 1));
+            int seed2 = (int)(0 + Math.random()*(2 - 0 + 1));
+            int seed3 = (int)(0 + Math.random()*(2 - 0 + 1));
+            int seed4 = (int)(0 + Math.random()*(2 - 0 + 1));
             int[] arr0 = new int[]{p, pp};
-            int[] arr1 = new int[]{p + seed1, pp + seed2};
-            int[] arr2 = new int[]{p + seed3, pp + seed4};
+            int[] arr1 = new int[]{(int) (p * randomPool[seed1]), (int) (pp * randomPool[seed2])};
+            int[] arr2 = new int[]{(int) (p * randomPool[seed3]), (int) (pp * randomPool[seed4])};
             map.put(0, arr0);
             map.put(1, arr1);
             map.put(2, arr2);
