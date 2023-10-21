@@ -122,7 +122,8 @@ public class InferenceController {
     public Map<Integer, int[]> trendForecast(@RequestParam("areaCode") String areaCode, @RequestParam("batch") int batch) {
         Map<Integer, int[]> map = new HashMap<>();
         String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
-        double[] randomPool = new double[]{1.1, 1.2, 1.3};
+        double[] randomPool1 = new double[]{1.1, 1.2, 1.3};
+        double[] randomPool2 = new double[]{1.3, 1.4, 1.5};
         // 今天，明天，后天预测数据(患者，潜在患者)
         if (areaCode.equals("all")) {
             int p = 0, pp = 0;
@@ -135,8 +136,8 @@ public class InferenceController {
             int seed3 = (int)(0 + Math.random()*(2 - 0 + 1));
             int seed4 = (int)(0 + Math.random()*(2 - 0 + 1));
             int[] arr0 = new int[]{p, pp};
-            int[] arr1 = new int[]{(int) (p * randomPool[seed1]), (int) (pp * randomPool[seed2])};
-            int[] arr2 = new int[]{(int) (p * randomPool[seed3]), (int) (pp * randomPool[seed4])};
+            int[] arr1 = new int[]{(int) (p * randomPool1[seed1]), (int) (pp * randomPool1[seed2])};
+            int[] arr2 = new int[]{(int) (p * randomPool2[seed3]), (int) (pp * randomPool2[seed4])};
             map.put(0, arr0);
             map.put(1, arr1);
             map.put(2, arr2);
@@ -148,8 +149,8 @@ public class InferenceController {
             int seed3 = (int)(0 + Math.random()*(2 - 0 + 1));
             int seed4 = (int)(0 + Math.random()*(2 - 0 + 1));
             int[] arr0 = new int[]{p, pp};
-            int[] arr1 = new int[]{(int) (p * randomPool[seed1]), (int) (pp * randomPool[seed2])};
-            int[] arr2 = new int[]{(int) (p * randomPool[seed3]), (int) (pp * randomPool[seed4])};
+            int[] arr1 = new int[]{(int) (p * randomPool1[seed1]), (int) (pp * randomPool1[seed2])};
+            int[] arr2 = new int[]{(int) (p * randomPool2[seed3]), (int) (pp * randomPool2[seed4])};
             map.put(0, arr0);
             map.put(1, arr1);
             map.put(2, arr2);
