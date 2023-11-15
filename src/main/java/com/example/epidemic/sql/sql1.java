@@ -1,4 +1,4 @@
-package com.example;
+package com.example.epidemic.sql;
 
 public class sql1 {
     public static void main(String[] args) {

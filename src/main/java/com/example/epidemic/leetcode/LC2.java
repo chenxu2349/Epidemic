@@ -1,4 +1,4 @@
-package com.example;
+package com.example.epidemic.leetcode;
 
 //import java.util.Arrays;
 //import java.util.Scanner;
