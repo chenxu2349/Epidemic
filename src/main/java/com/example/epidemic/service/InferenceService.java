@@ -22,9 +22,9 @@ public class InferenceService {
         return mp1.getAllPatients();
     }
 
-    public List<Patient> getPatients(int batch, String areaCode) {
+    public List<Patient> getPatientsByDate(String date, String areaCode) {
         List<Patient> list = new LinkedList<>();
-        for (Patient p : mp1.queryPatientsByDate(batch, areaCode)) list.add(p);
+        for (Patient p : mp1.queryPatientsByDate(date, areaCode)) list.add(p);
         return list;
     }
 
@@ -33,9 +33,9 @@ public class InferenceService {
         return p;
     }
 
-    public List<Contact> getContacts(int patient_id, String area_code, int batch) {
+    public List<Contact> getContacts(int patient_id, String area_code, String date) {
         List<Contact> list = new LinkedList<>();
-        for (Contact c : mp1.queryContacts(patient_id, area_code, batch)) list.add(c);
+        for (Contact c : mp1.queryContacts(patient_id, area_code, date)) list.add(c);
         return list;
     }
 

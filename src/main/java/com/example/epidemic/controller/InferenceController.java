@@ -4,6 +4,8 @@ import com.example.epidemic.pojo.Contact;
 import com.example.epidemic.pojo.Patient;
 import com.example.epidemic.pojo.Statistics;
 import com.example.epidemic.service.InferenceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,40 +22,47 @@ import java.util.Map;
 @Controller
 public class InferenceController {
 
+    private Logger logger = LoggerFactory.getLogger(InferenceController.class);
+    private String[] areaPool = new String[]{"10001","10002","10003","10004"};
+
     @Autowired
     private InferenceService inferenceService;
 
-    // 查看某一天的患者
+    // 查看某一天某区域的患者
     @GetMapping("/getPatients")
     @ResponseBody
-    public List<Patient> getPatients(@PathParam("batch") int batch, @PathParam("areaCode") String areaCode) {
+    public List<Patient> getPatients(@PathParam("date") String date, @PathParam("areaCode") String areaCode) {
         List<Patient> patients = new LinkedList<>();
-        for (Patient p : inferenceService.getPatients(batch, areaCode)) patients.add(p);
-        if (patients.size() == 0) return null;
-        else return patients;
+        for (Patient p : inferenceService.getPatientsByDate(date, areaCode)) patients.add(p);
+        if (patients.size() == 0) {
+            logger.warn("No Query Data...");
+            return null;
+        } else return patients;
     }
 
     // 查看某一天全部区域的患者
     @GetMapping("/getPatientsByDate")
     @ResponseBody
-    public List<Patient> getPatients(@PathParam("batch") int batch) {
+    public List<Patient> getPatients(@PathParam("date") String date) {
         List<Patient> patients = new LinkedList<>();
-        String[] areaPool = new String[]{"10001","10002","10003","10004"};
+//        String[] areaPool = new String[]{"10001","10002","10003","10004"};
         for (String areaCode : areaPool) {
-            for (Patient p : inferenceService.getPatients(batch, areaCode)) patients.add(p);
+            for (Patient p : inferenceService.getPatientsByDate(date, areaCode)) patients.add(p);
         }
-        if (patients.size() == 0) return null;
-        else return patients;
+        if (patients.size() == 0) {
+            logger.warn("No Query Data...");
+            return null;
+        } else return patients;
     }
 
     // 查看某个患者的接触者
     @GetMapping("/findContacts")
     @ResponseBody
-    public List<Contact> getContacts(@PathParam("patient_id") int patient_id, @PathParam("batch")int batch) {
-        String[] areaPool = new String[]{"10001","10002","10003","10004"};
+    public List<Contact> getContacts(@PathParam("patient_id") int patient_id, @PathParam("date") String date) {
+//        String[] areaPool = new String[]{"10001","10002","10003","10004"};
         List<Contact> contacts = new LinkedList<>();
         for (String areaCode : areaPool) {
-            for (Contact c : inferenceService.getContacts(patient_id, areaCode, batch)) contacts.add(c);
+            for (Contact c : inferenceService.getContacts(patient_id, areaCode, date)) contacts.add(c);
         }
         if (contacts.size() == 0) return null;
         else return contacts;
@@ -64,7 +73,7 @@ public class InferenceController {
     @ResponseBody
     public List<Contact> inference(@PathParam("patient_id") int patient_id, @PathParam("batch")int batch) throws ParseException {
         Patient p = inferenceService.getPatient(patient_id);
-        String[] areaPool = new String[]{"10001","10002","10003","10004"};
+//        String[] areaPool = new String[]{"10001","10002","10003","10004"};
         List<Contact> contacts = new LinkedList<>();
         for (String areaCode : areaPool) {
             for (Contact c : inferenceService.getContacts(patient_id, areaCode, batch)) contacts.add(c);
@@ -78,7 +87,7 @@ public class InferenceController {
     @ResponseBody
     public void inferAll() throws ParseException {
         List<Patient> allPatients = inferenceService.getAllPatients();
-        String[] areaPool = new String[]{"10001","10002","10003","10004"};
+//        String[] areaPool = new String[]{"10001","10002","10003","10004"};
         for (Patient p : allPatients) {
             List<Contact> contacts = new LinkedList<>();
             for (String areaCode : areaPool) {
@@ -104,7 +113,7 @@ public class InferenceController {
     @GetMapping("/countPatientAndPotential")
     @ResponseBody
     public List<Statistics> areaCount(@PathParam("batch") int batch) {
-        String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
+//        String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
         List<Statistics> ans = new LinkedList<>();
         for (String areaCode : areaPool) {
             Statistics s = new Statistics();
@@ -121,7 +130,7 @@ public class InferenceController {
     @ResponseBody
     public Map<Integer, int[]> trendForecast(@RequestParam("areaCode") String areaCode, @RequestParam("batch") int batch) {
         Map<Integer, int[]> map = new HashMap<>();
-        String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
+//        String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
         double[] randomPool1 = new double[]{1.1, 1.2, 1.3};
         double[] randomPool2 = new double[]{1.3, 1.4, 1.5};
         // 今天，明天，后天预测数据(患者，潜在患者)

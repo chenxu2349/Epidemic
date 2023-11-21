@@ -16,9 +16,11 @@ public interface TestMapper {
 
     int queryPatientByName(String patientName);
 
-    List<Patient> queryPatientsByDate(int batch, String areaCode);
+    List<Patient> queryPatientsByDate(String date, String areaCode);
 
-    List<Contact> queryContacts(int patient_id, String area_code, int batch);
+    List<Patient> queryPatientsByBatch(int batch, String areaCode);
+
+    List<Contact> queryContacts(int patient_id, String area_code, String date);
 
     List<PatientTrack> queryPatientTrackById(int patient_id);
 
