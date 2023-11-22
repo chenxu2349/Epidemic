@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.epidemic.mapper.UtilsMapper">
+
+    <resultMap id="RelevanceChainMap" type="com.example.epidemic.pojo.RelevanceChainPair">
+        <result column="correlation_chain_id" property="correlationChainId"></result>
+        <result column="correlation_chain_code" property="correlationChainCode"></result>
+        <result column="patient_id1" property="patientId1"></result>
+        <result column="patient_id2" property="patientId2"></result>
+    </resultMap>
+
+    <select id="getAllDates" resultType="java.lang.String">
+        select distinct patient_date from patients_info
+    </select>
+
+</mapper>

@@ -28,15 +28,15 @@ public interface TestMapper {
 
     Area queryAreaPeopleDensity(int area_id);
 
-    int countPatient(String areaCode, int batch);
+    int countPatient(String areaCode, String date);
 
-    int countPotentialPatient(String areaCode, int batch);
+    int countPotentialPatient(String areaCode, String date);
 
     void setPossibility(int contactId, double possibility);
 
     void setPotentialPatient(int contactId, int isPotential);
 
-    List<Contact> queryPotentialPatient(int batch, String areaCode);
+    List<Contact> queryPotentialPatient(String date, String areaCode);
 
     void clearAllPossibility();
 }

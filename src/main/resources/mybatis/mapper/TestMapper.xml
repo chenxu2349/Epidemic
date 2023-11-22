@@ -94,20 +94,26 @@
         where pi.batch = #{batch} and pi.area_code = #{areaCode}
     </select>
 
+<!--    <select id="queryPatientsByDate" resultMap="PatientMap">-->
+<!--        select *-->
+<!--        from patients_info as pi-->
+<!--        where pi.patient_id in(-->
+<!--            select distinct(pti.patient_id) from patients_track_info as pti-->
+<!--            where DATE_FORMAT(pti.end_time,'%Y-%m-%d') >= DATE_FORMAT(#{date},'%Y-%m-%d')-->
+<!--              and DATE_FORMAT(pti.start_time,'%Y-%m-%d') &lt;= DATE_FORMAT(#{date},'%Y-%m-%d')-->
+<!--        ) and pi.area_code = #{areaCode}-->
+<!--    </select>-->
+
     <select id="queryPatientsByDate" resultMap="PatientMap">
         select *
-        from patients_info as pi
-        where pi.patient_id in(
-            select distinct(pti.patient_id) from patients_track_info as pti
-            where DATE_FORMAT(pti.end_time,'%Y-%m-%d') >= DATE_FORMAT(#{date},'%Y-%m-%d')
-              and DATE_FORMAT(pti.start_time,'%Y-%m-%d') &lt;= DATE_FORMAT(#{date},'%Y-%m-%d')
-        ) and pi.area_code = #{areaCode}
+        from patients_info
+        where patient_date = #{date} and area_code = #{areaCode}
     </select>
 
     <select id="queryContacts" resultMap="ContactMap">
         select *
         from contacts_info as ci
-        where ci.patient_id = #{patient_id} and ci.area_code = #{area_code} and ci.batch = #{batch}
+        where ci.patient_id = #{patient_id} and ci.area_code = #{area_code} and ci.contact_date = #{date}
     </select>
 
     <select id="queryPatientTrackById" resultMap="PatientTrackMap">
@@ -119,7 +125,7 @@
         select * from contacts_track_info as cti
         where cti.contact_id = #{contact_id}
     </select>
-    
+
     <select id="queryAreaPeopleDensity" resultMap="AreaMap">
         select * from area_info
         where area_id = #{area_id}
@@ -127,12 +133,12 @@
 
     <select id="countPatient" resultType="java.lang.Integer">
         select count(*) from patients_info
-        where area_code = #{areaCode} and batch = #{batch}
+        where area_code = #{areaCode} and patient_date = #{date}
     </select>
 
     <select id="countPotentialPatient" resultType="java.lang.Integer">
         select count(*) from contacts_info
-        where area_code = #{areaCode} and potential_patient = 1 and batch = #{batch}
+        where area_code = #{areaCode} and potential_patient = 1 and contact_date = #{date}
     </select>
 
     <update id="setPossibility">
@@ -146,7 +152,7 @@
     </update>
 
     <select id="queryPotentialPatient" resultMap="ContactMap">
-        select * from contacts_info where potential_patient = 1 and batch = #{batch} and area_code = #{areaCode}
+        select * from contacts_info where potential_patient = 1 and contact_date = #{date} and area_code = #{areaCode}
     </select>
 
     <update id="clearAllPossibility">

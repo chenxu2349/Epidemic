@@ -3,6 +3,7 @@ package com.example.epidemic.controller;
 import com.example.epidemic.pojo.*;
 import com.example.epidemic.service.InferenceService;
 import com.example.epidemic.service.RelevanceService;
+import com.example.epidemic.utils.GetAllDates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +18,9 @@ public class RelevanceController {
 
     @Autowired
     private InferenceService inference_service;
-
     @Autowired
     private RelevanceService relevance_service;
+    private static String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
 
 //    int count = 0;
 
@@ -29,19 +30,15 @@ public class RelevanceController {
     public void relevanceAnalyse() throws ParseException {
 
 //        if (count >= 1) return;
-
         relevance_service.clearChainInfo();
-
         // 该区域关联的全部传播链，map存某个id对应的感染者列表
         Map<Integer, List<Patient>> chainList = new HashMap<>();
-
         // 全部区域的患者
-        int[] datePool = new int[]{1, 2, 3};
-        String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
+        List<String> datePool = GetAllDates.getAllDates();
         List<Patient> patients = new ArrayList<>();
-        for (int date : datePool) {
+        for (String date : datePool) {
             for (String areaCode : areaPool) {
-                for (Patient p : inference_service.getPatients(date, areaCode)) patients.add(p);
+                for (Patient p : inference_service.getPatientsByDate(date, areaCode)) patients.add(p);
             }
         }
 
@@ -146,8 +143,8 @@ public class RelevanceController {
             pN.setCorrelationChainCode(p.getCorrelationChainCode());
             pN.setPatientId1(p.getPatientId1());
             pN.setPatientId2(p.getPatientId2());
-            Patient p1 = inference_service.getPatient(p.getPatientId1());
-            Patient p2 = inference_service.getPatient(p.getPatientId2());
+            Patient p1 = inference_service.getPatientById(p.getPatientId1());
+            Patient p2 = inference_service.getPatientById(p.getPatientId2());
             pN.setPatientName1(p1.getPatientName());
             pN.setPatientName2(p2.getPatientName());
             ans.add(pN);
@@ -158,11 +155,11 @@ public class RelevanceController {
     // 从认定的潜在患者中(>=60%)筛选接触了多个感染者的重点对象
     @GetMapping("/keyPersonFilter")
     @ResponseBody
-    public List<Contact> findKeyPerson(@PathParam("batch") int batch,
+    public List<Contact> findKeyPerson(@PathParam("date") String date,
                                        @PathParam("areaCode") String areaCode) throws ParseException {
 
         // 经推理认定的潜在患者
-        List<Contact> potentialPatients = relevance_service.getPotentialPatient(batch, areaCode);
+        List<Contact> potentialPatients = relevance_service.getPotentialPatient(date, areaCode);
         Map<Integer, List<ContactTrack>> ctMap = new HashMap<>();
         for (Contact c : potentialPatients) {
             int cId = c.getContactId();
@@ -174,7 +171,7 @@ public class RelevanceController {
         List<Patient> patients = new ArrayList<>();
         Map<Integer, List<PatientTrack>> ptMap = new HashMap<>();   // 这个人去过哪些地方
         // String[] areaPool = new String[]{"10001","10002","10003","10004"};
-        for (Patient p : inference_service.getPatients(batch, areaCode)) patients.add(p);
+        for (Patient p : inference_service.getPatientsByDate(date, areaCode)) patients.add(p);
         for (Patient p : patients) {
             int pId = p.getPatientId();
             List<PatientTrack> patientTracks = relevance_service.getPatientTrackById(pId);
@@ -202,12 +199,12 @@ public class RelevanceController {
     // 查看某个患者的潜在患者
     @GetMapping("/getPotentialPatients")
     @ResponseBody
-    public List<Contact> getPotentialPatients(@PathParam("patient_id") int patient_id, @PathParam("batch")int batch) {
+    public List<Contact> getPotentialPatients(@PathParam("patient_id") int patient_id, @PathParam("date") String date) {
 
         String[] areaPool = new String[]{"10001","10002","10003","10004"};
         List<Contact> contacts = new LinkedList<>();
         for (String areaCode : areaPool) {
-            for (Contact c : inference_service.getContacts(patient_id, areaCode, batch)) contacts.add(c);
+            for (Contact c : inference_service.getContacts(patient_id, areaCode, date)) contacts.add(c);
         }
         List<Contact> ans = new LinkedList<>();
 

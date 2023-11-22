@@ -41,6 +41,24 @@ public class Contact {
 
     private int batch;
 
+    private String contactDate;
+
+    public int getContactHistoryOfIllness() {
+        return contactHistoryOfIllness;
+    }
+
+    public void setContactHistoryOfIllness(int contactHistoryOfIllness) {
+        this.contactHistoryOfIllness = contactHistoryOfIllness;
+    }
+
+    public String getContactDate() {
+        return contactDate;
+    }
+
+    public void setContactDate(String contactDate) {
+        this.contactDate = contactDate;
+    }
+
     public int getContactId() {
         return contactId;
     }
@@ -203,7 +221,7 @@ public class Contact {
 
     @Override
     public String toString() {
-        return "contact{" +
+        return "Contact{" +
                 "contactId=" + contactId +
                 ", contactName='" + contactName + '\'' +
                 ", patientId=" + patientId +
@@ -213,7 +231,7 @@ public class Contact {
                 ", contactTel='" + contactTel + '\'' +
                 ", contactAddress='" + contactAddress + '\'' +
                 ", contactOfVaccinations=" + contactOfVaccinations +
-                ", contact_historyOfIllness=" + contactHistoryOfIllness +
+                ", contactHistoryOfIllness=" + contactHistoryOfIllness +
                 ", potentialPatientProbability=" + potentialPatientProbability +
                 ", potentialPatient=" + potentialPatient +
                 ", heartRate='" + heartRate + '\'' +
@@ -224,6 +242,7 @@ public class Contact {
                 ", hemoglobin='" + hemoglobin + '\'' +
                 ", vitalCapacity='" + vitalCapacity + '\'' +
                 ", batch=" + batch +
+                ", contactDate='" + contactDate + '\'' +
                 '}';
     }
 }

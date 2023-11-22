@@ -35,6 +35,16 @@ public class Patient {
 
     private int batch;
 
+    private String patientDate;
+
+    public String getPatientDate() {
+        return patientDate;
+    }
+
+    public void setPatientDate(String patientDate) {
+        this.patientDate = patientDate;
+    }
+
     public int getPatientId() {
         return patientId;
     }
@@ -181,7 +191,7 @@ public class Patient {
 
     @Override
     public String toString() {
-        return "patient{" +
+        return "Patient{" +
                 "patientId=" + patientId +
                 ", epidemicId=" + epidemicId +
                 ", areaCode='" + areaCode + '\'' +
@@ -199,6 +209,7 @@ public class Patient {
                 ", hemoglobin='" + hemoglobin + '\'' +
                 ", vitalCapacity='" + vitalCapacity + '\'' +
                 ", batch=" + batch +
+                ", patientDate='" + patientDate + '\'' +
                 '}';
     }
 }

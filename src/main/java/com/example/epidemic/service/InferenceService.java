@@ -28,7 +28,7 @@ public class InferenceService {
         return list;
     }
 
-    public Patient getPatient(int patient_id) {
+    public Patient getPatientById(int patient_id) {
         Patient p = mp1.queryPatientById(patient_id);
         return p;
     }
@@ -173,12 +173,12 @@ public class InferenceService {
         else return point * 1.0 / (factors * 100);
     }
 
-    public int countPatient(String areaCode, int batch) {
-        return mp1.countPatient(areaCode, batch);
+    public int countPatient(String areaCode, String date) {
+        return mp1.countPatient(areaCode, date);
     }
 
-    public int countPotentialPatient(String areaCode, int batch) {
-        return mp1.countPotentialPatient(areaCode, batch);
+    public int countPotentialPatient(String areaCode, String date) {
+        return mp1.countPotentialPatient(areaCode, date);
     }
 
     public void setDatabase(int cId, double potentialP) {

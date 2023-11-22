@@ -4,6 +4,8 @@ import com.example.epidemic.pojo.Contact;
 import com.example.epidemic.pojo.Patient;
 import com.example.epidemic.pojo.Statistics;
 import com.example.epidemic.service.InferenceService;
+import com.example.epidemic.utils.GetAllDates;
+import com.example.epidemic.utils.RandomGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,7 @@ import java.util.Map;
 public class InferenceController {
 
     private Logger logger = LoggerFactory.getLogger(InferenceController.class);
-    private String[] areaPool = new String[]{"10001","10002","10003","10004"};
+    private static String[] areaPool = new String[]{"10001","10002","10003","10004"};
 
     @Autowired
     private InferenceService inferenceService;
@@ -71,12 +73,12 @@ public class InferenceController {
     // 推理运算
     @GetMapping("/infer")
     @ResponseBody
-    public List<Contact> inference(@PathParam("patient_id") int patient_id, @PathParam("batch")int batch) throws ParseException {
-        Patient p = inferenceService.getPatient(patient_id);
+    public List<Contact> inference(@PathParam("patient_id") int patient_id, @PathParam("date") String date) throws ParseException {
+        Patient p = inferenceService.getPatientById(patient_id);
 //        String[] areaPool = new String[]{"10001","10002","10003","10004"};
         List<Contact> contacts = new LinkedList<>();
         for (String areaCode : areaPool) {
-            for (Contact c : inferenceService.getContacts(patient_id, areaCode, batch)) contacts.add(c);
+            for (Contact c : inferenceService.getContacts(patient_id, areaCode, date)) contacts.add(c);
         }
         if (contacts.size() == 0) return null;
         else return inferenceService.inference(p, contacts);
@@ -91,10 +93,10 @@ public class InferenceController {
         for (Patient p : allPatients) {
             List<Contact> contacts = new LinkedList<>();
             for (String areaCode : areaPool) {
-                for (int batch = 1; batch <= 3; batch++) {
+                List<String> allDates = GetAllDates.getAllDates();
+                for (String date : allDates) {
                     // 获取这一天这个地区的该患者的所有接触者
-                    for (Contact c : inferenceService.getContacts(p.getPatientId(), areaCode, batch)) contacts.add(c);
-
+                    for (Contact c : inferenceService.getContacts(p.getPatientId(), areaCode, date)) contacts.add(c);
                     // 推理
                     inferenceService.inference(p, contacts);
                 }
@@ -112,14 +114,14 @@ public class InferenceController {
     // 统计各区域患者和潜在患者数量
     @GetMapping("/countPatientAndPotential")
     @ResponseBody
-    public List<Statistics> areaCount(@PathParam("batch") int batch) {
+    public List<Statistics> areaCount(@PathParam("date") String date) {
 //        String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
         List<Statistics> ans = new LinkedList<>();
         for (String areaCode : areaPool) {
             Statistics s = new Statistics();
             s.setAreaCode(areaCode);
-            s.setPatient(inferenceService.countPatient(areaCode, batch));
-            s.setPotential_patient(inferenceService.countPotentialPatient(areaCode, batch));
+            s.setPatient(inferenceService.countPatient(areaCode, date));
+            s.setPotential_patient(inferenceService.countPotentialPatient(areaCode, date));
             ans.add(s);
         }
         return ans;
@@ -128,42 +130,38 @@ public class InferenceController {
     // 趋势预测，预测后两天的患者和潜在患者数量
     @GetMapping("/forecast")
     @ResponseBody
-    public Map<Integer, int[]> trendForecast(@RequestParam("areaCode") String areaCode, @RequestParam("batch") int batch) {
+    public Map<Integer, int[]> trendForecast(@RequestParam("areaCode") String areaCode, @RequestParam("date") String date) {
+
         Map<Integer, int[]> map = new HashMap<>();
 //        String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
         double[] randomPool1 = new double[]{1.1, 1.2, 1.3};
         double[] randomPool2 = new double[]{1.3, 1.4, 1.5};
+
         // 今天，明天，后天预测数据(患者，潜在患者)
+        int p, pp;
         if (areaCode.equals("all")) {
-            int p = 0, pp = 0;
+            p = 0;
+            pp = 0;
             for (String areaCode1 : areaPool) {
-                p += inferenceService.countPatient(areaCode1, batch);
-                pp += inferenceService.countPotentialPatient(areaCode1, batch);
+                p += inferenceService.countPatient(areaCode1, date);
+                pp += inferenceService.countPotentialPatient(areaCode1, date);
             }
-            int seed1 = (int)(0 + Math.random()*(2 - 0 + 1));
-            int seed2 = (int)(0 + Math.random()*(2 - 0 + 1));
-            int seed3 = (int)(0 + Math.random()*(2 - 0 + 1));
-            int seed4 = (int)(0 + Math.random()*(2 - 0 + 1));
-            int[] arr0 = new int[]{p, pp};
-            int[] arr1 = new int[]{(int) (p * randomPool1[seed1]), (int) (pp * randomPool1[seed2])};
-            int[] arr2 = new int[]{(int) (p * randomPool2[seed3]), (int) (pp * randomPool2[seed4])};
-            map.put(0, arr0);
-            map.put(1, arr1);
-            map.put(2, arr2);
         } else {
-            int p = inferenceService.countPatient(areaCode, batch);
-            int pp = inferenceService.countPotentialPatient(areaCode, batch);
-            int seed1 = (int)(0 + Math.random()*(2 - 0 + 1));
-            int seed2 = (int)(0 + Math.random()*(2 - 0 + 1));
-            int seed3 = (int)(0 + Math.random()*(2 - 0 + 1));
-            int seed4 = (int)(0 + Math.random()*(2 - 0 + 1));
-            int[] arr0 = new int[]{p, pp};
-            int[] arr1 = new int[]{(int) (p * randomPool1[seed1]), (int) (pp * randomPool1[seed2])};
-            int[] arr2 = new int[]{(int) (p * randomPool2[seed3]), (int) (pp * randomPool2[seed4])};
-            map.put(0, arr0);
-            map.put(1, arr1);
-            map.put(2, arr2);
+            p = inferenceService.countPatient(areaCode, date);
+            pp = inferenceService.countPotentialPatient(areaCode, date);
         }
+
+        int seed1 = RandomGenerator.getRandomInt(0, 2);
+        int seed2 = RandomGenerator.getRandomInt(0, 2);
+        int seed3 = RandomGenerator.getRandomInt(0, 2);
+        int seed4 = RandomGenerator.getRandomInt(0, 2);
+        int[] arr0 = new int[]{p, pp};
+        int[] arr1 = new int[]{(int) (p * randomPool1[seed1]), (int) (pp * randomPool1[seed2])};
+        int[] arr2 = new int[]{(int) (p * randomPool2[seed3]), (int) (pp * randomPool2[seed4])};
+        map.put(0, arr0);
+        map.put(1, arr1);
+        map.put(2, arr2);
+
         return map;
     }
 }
