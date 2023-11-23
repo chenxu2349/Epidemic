@@ -10,7 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class spring {
+public class Spring {
 
     @Autowired
     private InferenceService service1;

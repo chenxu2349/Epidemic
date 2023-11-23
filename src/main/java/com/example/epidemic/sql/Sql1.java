@@ -1,6 +1,6 @@
 package com.example.epidemic.sql;
 
-public class sql1 {
+public class Sql1 {
     public static void main(String[] args) {
         // 常量池
         String[] firstName = new String[]{"赵", "钱", "王", "孙", "李", "周", "张", "陈", "方", "陶", "江", "杨", "沈", "韩", "楚", "秦"};
