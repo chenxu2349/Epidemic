@@ -1,10 +1,10 @@
 package com.example.epidemic.controller;
 
+import com.example.epidemic.mapper.UtilsMapper;
 import com.example.epidemic.pojo.Contact;
 import com.example.epidemic.pojo.Patient;
 import com.example.epidemic.pojo.Statistics;
 import com.example.epidemic.service.InferenceService;
-import com.example.epidemic.utils.GetAllDates;
 import com.example.epidemic.utils.RandomGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +24,8 @@ import java.util.Map;
 @Controller
 public class InferenceController {
 
+    @Autowired
+    private UtilsMapper utilsMapper;
     private Logger logger = LoggerFactory.getLogger(InferenceController.class);
     private static String[] areaPool = new String[]{"10001","10002","10003","10004"};
 
@@ -85,6 +87,7 @@ public class InferenceController {
     }
 
     // 推理全部患者的接触者概率，刷新数据库所有接触者患病概率
+    // TODO 耗时过长
     @GetMapping("/inferAll")
     @ResponseBody
     public void inferAll() throws ParseException {
@@ -93,7 +96,7 @@ public class InferenceController {
         for (Patient p : allPatients) {
             List<Contact> contacts = new LinkedList<>();
             for (String areaCode : areaPool) {
-                List<String> allDates = GetAllDates.getAllDates();
+                List<String> allDates = utilsMapper.getAllDates();
                 for (String date : allDates) {
                     // 获取这一天这个地区的该患者的所有接触者
                     for (Contact c : inferenceService.getContacts(p.getPatientId(), areaCode, date)) contacts.add(c);

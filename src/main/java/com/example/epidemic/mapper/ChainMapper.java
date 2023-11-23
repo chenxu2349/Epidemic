@@ -8,7 +8,7 @@ import java.util.List;
 @Mapper
 public interface ChainMapper {
 
-    List<RelevanceChainPair> queryRelevancePairs(int batch, String areaCode);
+    List<RelevanceChainPair> queryRelevancePairs(String date, String areaCode);
 
     void setRelevancePair(int id, String code, int pid1, int pid2);
 

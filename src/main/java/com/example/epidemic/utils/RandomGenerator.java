@@ -6,6 +6,6 @@ public class RandomGenerator {
 
     public static int getRandomInt(int min, int max) {
         Random random = new Random();
-        return min + random.nextInt(max - min + 1) - 1;
+        return min + random.nextInt(max - min + 1);
     }
 }

@@ -97,8 +97,8 @@ public class RelevanceService {
         return testMapper.queryPotentialPatient(date, areaCode);
     }
 
-    public List<RelevanceChainPair> getRelevanceChainPairs(int batch, String areaCode) {
-        return chainMapper.queryRelevancePairs(batch, areaCode);
+    public List<RelevanceChainPair> getRelevanceChainPairs(String date, String areaCode) {
+        return chainMapper.queryRelevancePairs(date, areaCode);
     }
 
     public void setChainPair(int id, String code, int pid1, int pid2) {

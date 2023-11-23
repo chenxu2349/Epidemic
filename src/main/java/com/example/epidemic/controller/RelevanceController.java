@@ -1,9 +1,9 @@
 package com.example.epidemic.controller;
 
+import com.example.epidemic.mapper.UtilsMapper;
 import com.example.epidemic.pojo.*;
 import com.example.epidemic.service.InferenceService;
 import com.example.epidemic.service.RelevanceService;
-import com.example.epidemic.utils.GetAllDates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +20,8 @@ public class RelevanceController {
     private InferenceService inference_service;
     @Autowired
     private RelevanceService relevance_service;
+    @Autowired
+    private UtilsMapper utilsMapper;
     private static String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
 
 //    int count = 0;
@@ -34,7 +36,7 @@ public class RelevanceController {
         // 该区域关联的全部传播链，map存某个id对应的感染者列表
         Map<Integer, List<Patient>> chainList = new HashMap<>();
         // 全部区域的患者
-        List<String> datePool = GetAllDates.getAllDates();
+        List<String> datePool = utilsMapper.getAllDates();
         List<Patient> patients = new ArrayList<>();
         for (String date : datePool) {
             for (String areaCode : areaPool) {
@@ -135,9 +137,9 @@ public class RelevanceController {
     // 查询传播链
     @GetMapping("getRelevanceChain")
     @ResponseBody
-    public List<RelevanceChainPairWithName> getRelevanceChain(@PathParam("batch") int batch, @PathParam("areaCode") String areaCode) {
+    public List<RelevanceChainPairWithName> getRelevanceChain(@PathParam("date") String date, @PathParam("areaCode") String areaCode) {
         List<RelevanceChainPairWithName> ans = new LinkedList<>();
-        for (RelevanceChainPair p : relevance_service.getRelevanceChainPairs(batch, areaCode)) {
+        for (RelevanceChainPair p : relevance_service.getRelevanceChainPairs(date, areaCode)) {
             RelevanceChainPairWithName pN = new RelevanceChainPairWithName();
             pN.setCorrelationChainId(p.getCorrelationChainId());
             pN.setCorrelationChainCode(p.getCorrelationChainCode());
