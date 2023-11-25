@@ -11,10 +11,15 @@ spring:
     url: jdbc:mysql://101.35.244.157:3306/epidemic?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: chenxu
     password: CX185813
+
 #    url: jdbc:mysql://114.213.213.163:3306/epidemic?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
 #    username: awen
 #    password: 123456
 #    test
+
+#    url: jdbc:mysql://139.224.233.133:3306/epidemic?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+#    username: chenxu
+#    password: CX185813
 
 mybatis:
   #  mapper???????
