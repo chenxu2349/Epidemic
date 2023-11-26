@@ -4,31 +4,31 @@ epidemic
 ddl: 2023-10
 
 统计区域患者和接触者
-http://localhost:8080/countPatientAndPotential?batch=2
+http://localhost:8080/countPatientAndPotential?date=2023-07-28
 
 查找患者（某天某区域）
-http://localhost:8080/getPatients?batch=1&areaCode=10001
+http://localhost:8080/getPatients?date=2023-07-28&areaCode=10001
 
 查找患者（某天全部区域）
-http://localhost:8080/getPatientsByDate?batch=1
+http://localhost:8080/getPatientsByDate?date=2023-07-28
 
 查找某个患者的接触者
-http://localhost:8080/findContacts?patient_id=10001&batch=1
+http://localhost:8080/findContacts?patient_id=10001&date=2023-07-28
 
 推理操作
-http://localhost:8080/infer?patient_id=10001&batch=1
+http://localhost:8080/infer?patient_id=10001&date=2023-07-28
 
 关联分析（直接推算所有天和地区的传播链并存入数据库）
 http://localhost:8080/relevanceAll
 
 按天和地区查询传播链
-http://localhost:8080/getRelevanceChain?batch=1&areaCode=10001
+http://localhost:8080/getRelevanceChain?date=2023-07-28&areaCode=10001
 
 重点对象筛查
-http://localhost:8080/keyPersonFilter?batch=3&areaCode=10001
+http://localhost:8080/keyPersonFilter?date=2023-07-28&areaCode=10001
 
 查找某个患者的潜在患者
-http://localhost:8080/getPotentialPatients?patient_id=10001&batch=1
+http://localhost:8080/getPotentialPatients?patient_id=10001&date=2023-07-28
 
 清空接触者概率
 http://localhost:8080/clearAllPossibility
@@ -40,7 +40,7 @@ http://localhost:8080/patient
 http://localhost:8080/contact
 
 趋势预测(如果全市，就把10002替换成all)
-http://localhost:8080/forecast?areaCode=10002&batch=1
+http://localhost:8080/forecast?areaCode=10002&date=2023-07-28
 
 推理全部接触者概率
 http://localhost:8080/inferAll

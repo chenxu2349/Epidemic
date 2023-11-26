@@ -109,7 +109,6 @@ public class InferenceController {
 
     // 所有接触者概率清零
     @GetMapping("/clearAllPossibility")
-    @ResponseBody
     public void clearAll() {
         inferenceService.clearAllPossibility();
     }

@@ -5,6 +5,7 @@ import com.example.epidemic.pojo.Contact;
 import com.example.epidemic.pojo.ContactTrack;
 import com.example.epidemic.pojo.Patient;
 import com.example.epidemic.pojo.PatientTrack;
+import com.example.epidemic.utils.Normalization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,15 +60,13 @@ public class InferenceService {
                 for (ContactTrack ct : contactTracks) {
                     // 患者和接触者出现在同一个区域（时空交集）才会推理概率
                     if (pt.getAreaId() == ct.getAreaId()) {
-
                         // 影响因子
-                        int contactTime = contactTime(pt.getStartTime(), pt.getEndTime(), ct.getStartTime(), ct.getEndTime());
-                        int maskSituation = maskSituation(pt.getMask(), ct.getMask());
+                        int contactTime = Normalization.contactTime(pt.getStartTime(), pt.getEndTime(), ct.getStartTime(), ct.getEndTime());
+                        int maskSituation = Normalization.maskSituation(pt.getMask(), ct.getMask());
                         double peopleDensity = mp1.queryAreaPeopleDensity(pt.getAreaId()).getPopulationDensity();
                         int contactAge = c.getContactAge();
                         int contactSex = c.getContactSex();
                         int contactOfVaccinations = c.getContactOfVaccinations();
-
                         // 影响因子权重系数
                         double x1 = 0.0, x2 = 0.0, x3 = 0.0, x4 = 0.0, x5 = 0.0, x6 = 0.0;
 
@@ -116,61 +115,17 @@ public class InferenceService {
         // 得到每个接触者患病概率，并且更新数据
         for (Contact c : contacts) {
             int cId = c.getContactId();
-            double potentialP = normalization(contactPotentialPoints.get(c.getContactId()), factors);
+            double potentialP = Normalization.normalization(contactPotentialPoints.get(c.getContactId()), factors);
             DecimalFormat df = new DecimalFormat("#.00");
             potentialP = Double.valueOf(df.format(potentialP));
             contactPotentialPossibility.put(cId, potentialP);
             // 回写数据库
             c.setPotentialPatientProbability(potentialP);
-            setDatabase(cId, potentialP);
+            // setDatabase(cId, potentialP);
+            if (potentialP >= 0.6) mp1.setPotentialPatient(cId, 1);
+            mp1.setPossibility(cId, potentialP);
         }
         return contacts;
-    }
-
-    // 接触时间
-    public int contactTime(String p_start, String p_end, String c_start, String c_end) throws ParseException {
-
-        // String类型转为日期类型比较
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-        // 时间戳，毫秒
-        long ps = format.parse(p_start).getTime();
-        long pe = format.parse(p_end).getTime();
-        long cs = format.parse(c_start).getTime();
-        long ce = format.parse(c_end).getTime();
-
-        long count = 0;
-        if (cs >= ps && cs <= pe) {
-            if (ce >= pe) count = pe - cs;
-            else count = ce - cs;
-        }
-        if (ps >= cs && ps <= ce) {
-            if (pe >= ce) count = ce - ps;
-            else count = pe - ps;
-        }
-
-        // ms -> min 两个时间段交集是多少分钟
-        return (int)(count/60000);
-    }
-
-    // 佩戴口罩情况, 0-10代表感染风险
-    public int maskSituation(int a, int b) {
-        int seed = (int)(0 + Math.random()*(16 - 0 + 1));
-        if (a == 1 && b == 1) return 1;
-        else if (a == 1 || b == 1) return 3;
-        else return 9;
-    }
-
-    // 数据归一化为规定区间概率
-    public double normalization(int point, int factors) {
-        int max = factors * 100;
-        int seed = (int)(0 + Math.random()*(2 - 0 + 1));
-        if (point >= max) {
-            if (seed == 0) return 0.97;
-            else if (seed == 1) return 0.96;
-            else return 0.95;
-        }
-        else return point * 1.0 / (factors * 100);
     }
 
     public int countPatient(String areaCode, String date) {
@@ -181,10 +136,10 @@ public class InferenceService {
         return mp1.countPotentialPatient(areaCode, date);
     }
 
-    public void setDatabase(int cId, double potentialP) {
-        if (potentialP >= 0.6) mp1.setPotentialPatient(cId, 1);
-        mp1.setPossibility(cId, potentialP);
-    }
+//    public void setDatabase(int cId, double potentialP) {
+//        if (potentialP >= 0.6) mp1.setPotentialPatient(cId, 1);
+//        mp1.setPossibility(cId, potentialP);
+//    }
 
     public void clearAllPossibility() {
         mp1.clearAllPossibility();
