@@ -31,13 +31,15 @@ public class DataFormController {
     @Autowired
     private DataFormService dataFormService;
 
+
+    // TODO 两个插入表单有问题
     @PostMapping("/patient")
     @ResponseBody
     public String insertPatient(@RequestParam("patientName") String patientName,
                               @RequestParam("patientAddress") String patientAddress,
                               @RequestParam("patientTel") String patientTel,
                               @RequestParam("patientAge") int patientAge,
-                              @RequestParam("batch") int batch,
+                              @RequestParam("date") String date,
                               @RequestParam("areaCode") String areaCode,
                               @RequestParam("patientSymptom") int patientSymptom,
                               @RequestParam("patientSex") int patientSex) {
@@ -46,7 +48,7 @@ public class DataFormController {
         p.setPatientAddress(patientAddress);
         p.setPatientTel(patientTel);
         p.setPatientAge(patientAge);
-        p.setBatch(batch);
+        p.setPatientDate(date);
         p.setAreaCode(areaCode);
         p.setPatientSymptom(patientSymptom);
         p.setPatientSex(patientSex);
@@ -65,7 +67,7 @@ public class DataFormController {
                               @RequestParam("contactAddress") String contactAddress,
                               @RequestParam("patientName") String patientName,
                               @RequestParam("contactAge") int contactAge,
-                              @RequestParam("batch") int batch,
+                              @RequestParam("date") String date,
                               @RequestParam("areaCode") String areaCode,
                               @RequestParam("contactTel") String contactTel,
                               @RequestParam("contactSex") int contactSex) {
@@ -73,7 +75,7 @@ public class DataFormController {
         c.setContactName(contactName);
         c.setContactAddress(contactAddress);
         c.setContactAge(contactAge);
-        c.setBatch(batch);
+        c.setContactDate(date);
         c.setAreaCode(areaCode);
         c.setContactTel(contactTel);
         c.setContactSex(contactSex);

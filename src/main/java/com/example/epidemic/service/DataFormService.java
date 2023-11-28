@@ -25,12 +25,13 @@ public class DataFormService {
 
     public void insertPatient(Patient p) {
         insertMapper.insertPatient(p.getPatientName(), p.getPatientAddress(), p.getPatientTel(), p.getPatientAge(),
-                p.getBatch(), p.getAreaCode(), p.getPatientSymptom(), p.getPatientSex());
+                p.getPatientDate(), p.getAreaCode(), p.getPatientSymptom(), p.getPatientSex(), p.getHeartRate(), p.getBreath());
     }
 
     public void insertContact(Contact c, String patientName) {
-        int patientId = testMapper.queryPatientByName(patientName);
-        insertMapper.insertContact(c.getContactName(), c.getContactAddress(), patientId, c.getContactAge(),
-                c.getBatch(), c.getAreaCode(), c.getContactTel(), c.getContactSex());
+//        int patientId = testMapper.queryPatientByName(patientName);
+        insertMapper.insertContact(c.getContactName(), c.getAreaCode(), c.getContactAge(), c.getContactSex(), c.getContactTel(), c.getContactAddress(),
+                c.getContactOfVaccinations(), c.getContactHistoryOfIllness(), c.getPotentialPatientProbability(), c.getPotentialPatient(),
+                c.getHeartRate(), c.getBreath(), c.getContactDate());
     }
 }

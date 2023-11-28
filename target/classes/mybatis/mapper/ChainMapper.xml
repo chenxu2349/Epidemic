@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.epidemic.mapper.ChainMapper">
+
+    <resultMap id="RelevanceChainMap" type="com.example.epidemic.pojo.RelevanceChainPair">
+        <result column="correlation_chain_id" property="correlationChainId"></result>
+        <result column="correlation_chain_code" property="correlationChainCode"></result>
+        <result column="patient_id1" property="patientId1"></result>
+        <result column="patient_id2" property="patientId2"></result>
+    </resultMap>
+
+    <select id="queryRelevancePairs" resultMap="RelevanceChainMap">
+        select * from correlation_chain_info as cci, patients_info as pi
+        where cci.correlation_chain_code = #{areaCode} and pi.patient_date = #{date} and cci.patient_id1 = pi.patient_id
+    </select>
+
+    <insert id="setRelevancePair">
+        insert into correlation_chain_info values (default, #{id}, #{code}, #{pid1}, #{pid2});
+    </insert>
+
+    <update id="clearChainInfo">
+        truncate table correlation_chain_info;
+    </update>
+
+</mapper>

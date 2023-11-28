@@ -18,8 +18,9 @@ import java.util.ConcurrentModificationException;
 public interface InsertMapper {
 
     void insertPatient(String patientName, String patientAddress, String patientTel, int patientAge,
-                       int batch, String areaCode, int patientSymptom, int patientSex);
+                       String patientDate, String areaCode, int patientSymptom, int patientSex, double heartRate, double breath);
 
-    void insertContact(String contactName, String contactAddress, int patientId, int contactAge,
-                       int batch, String areaCode, String contactTel, int contactSex);
+    void insertContact(String contactName, String areaCode, int contactAge, int contactSex, String contactTel, String contactAddress,
+                       int contactOfVaccinations, int contactHistoryOfIllness, double potentialPatientProbability, double potentialPatient,
+                       double heartRate, double breath, String contactDate);
 }

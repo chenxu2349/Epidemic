@@ -1,0 +1,23 @@
+server:
+  port: 8080
+spring:
+  data:
+    neo4j:
+      uri: bolt://localhost:7687
+      username: neo4j
+      password: 123456
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://101.35.244.157:3306/epidemic?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: chenxu
+    password: CX185813
+#    url: jdbc:mysql://114.213.213.163:3306/epidemic?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+#    username: awen
+#    password: 123456
+#    test
+
+mybatis:
+  #  mapper???????
+  mapper-locations: classpath:/mybatis/mapper/*.xml
+  #  ????????
+  type-aliases-package: com.example.epidemic.pojo
