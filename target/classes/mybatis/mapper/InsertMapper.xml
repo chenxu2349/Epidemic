@@ -18,12 +18,13 @@
 
     <insert id="insertPatient">
         insert into patients_info values (default, default, #{areaCode}, #{patientName}, #{patientAddress}, #{patientTel}, #{patientSymptom},
-                                          #{patientAge}, #{patientSex}, default, #{batch}, default);
+                                          #{patientAge}, #{patientSex}, #{heartRate}, #{breath}, #{patientDate});
     </insert>
 
     <insert id="insertContact">
-        insert into contacts_info values (default, #{contactName}, #{patientId}, #{areaCode}, #{contactAge}, #{contactSex}, #{contactTel},
-                                          #{contactAddress}, default, default, default, default, default, default, #{batch});
+        insert into contacts_info values (default, #{contactName}, #{areaCode}, #{contactAge}, #{contactSex}, #{contactTel},
+                                          #{contactAddress}, #{contactOfVaccinations}, #{contactHistoryOfIllness}, #{potentialPatientProbability},
+                                          #{potentialPatient}, #{heartRate}, #{breath}, #{contactDate});
     </insert>
 
 </mapper>

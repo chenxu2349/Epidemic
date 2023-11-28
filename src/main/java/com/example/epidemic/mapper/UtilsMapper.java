@@ -8,4 +8,6 @@ import java.util.List;
 public interface UtilsMapper {
 
     List<String> getAllDates();
+
+    List<String> getAllAreaCodes();
 }

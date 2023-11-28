@@ -15,19 +15,13 @@
         <result column="patient_age" property="patientAge"></result>
         <result column="patient_sex" property="patientSex"></result>
         <result column="heart_rate" property="heartRate"></result>
-        <result column="blood_pressure" property="bloodPressure"></result>
-        <result column="blood_glucose" property="bloodGlucose"></result>
-        <result column="blood_fat" property="bloodFat"></result>
-        <result column="body_temperature" property="bodyTemperature"></result>
-        <result column="hemoglobin" property="hemoglobin"></result>
-        <result column="vital_capacity" property="vitalCapacity"></result>
-        <result column="batch" property="batch"></result>
+        <result column="breath" property="breath"></result>
+        <result column="patient_date" property="patientDate"></result>
     </resultMap>
 
     <resultMap id="ContactMap" type="com.example.epidemic.pojo.Contact">
         <result column="contact_id" property="contactId"></result>
         <result column="contact_name" property="contactName"></result>
-        <result column="patient_id" property="patientId"></result>
         <result column="area_code" property="areaCode"></result>
         <result column="contact_age" property="contactAge"></result>
         <result column="contact_sex" property="contactSex"></result>
@@ -38,13 +32,8 @@
         <result column="potential_patient_probability" property="potentialPatientProbability"></result>
         <result column="potential_patient" property="potentialPatient"></result>
         <result column="heart_rate" property="heartRate"></result>
-        <result column="blood_pressure" property="bloodPressure"></result>
-        <result column="blood_glucose" property="bloodGlucose"></result>
-        <result column="blood_fat" property="bloodFat"></result>
-        <result column="body_temperature" property="bodyTemperature"></result>
-        <result column="hemoglobin" property="hemoglobin"></result>
-        <result column="vital_capacity" property="vitalCapacity"></result>
-        <result column="batch" property="batch"></result>
+        <result column="breath" property="breath"></result>
+        <result column="contact_date" property="contactDate"></result>
     </resultMap>
 
     <resultMap id="PatientTrackMap" type="com.example.epidemic.pojo.PatientTrack">
@@ -72,15 +61,14 @@
     <resultMap id="AreaMap" type="com.example.epidemic.pojo.Area">
         <result column="area_id" property="areaId"></result>
         <result column="area_code" property="areaCode"></result>
+        <result column="province_name" property="provinceName"></result>
+        <result column="city_name" property="cityName"></result>
+        <result column="county_name" property="countyName"></result>
         <result column="area_name" property="areaName"></result>
-        <result column="regional_location" property="regionalLocation"></result>
-        <result column="population_density" property="populationDensity"></result>
-        <result column="population_mobility" property="populationMobility"></result>
     </resultMap>
 
     <select id="getAllPatients" resultMap="PatientMap">
-        select *
-        from patients_info;
+        select * from patients_info;
     </select>
 
     <select id="queryPatientById" resultMap="PatientMap">
@@ -89,8 +77,7 @@
     </select>
 
     <select id="queryPatientsByBatch" resultMap="PatientMap">
-        select *
-        from patients_info as pi
+        select * from patients_info as pi
         where pi.batch = #{batch} and pi.area_code = #{areaCode}
     </select>
 
@@ -105,25 +92,25 @@
 <!--    </select>-->
 
     <select id="queryPatientsByDate" resultMap="PatientMap">
-        select *
-        from patients_info
+        select * from patients_info
         where patient_date = #{date} and area_code = #{areaCode}
     </select>
 
     <select id="queryContacts" resultMap="ContactMap">
-        select *
-        from contacts_info as ci
-        where ci.patient_id = #{patient_id} and ci.area_code = #{area_code} and ci.contact_date = #{date}
+        select * from contacts_info
+        where area_code = #{area_code} and contact_date = #{date} and contacts_info.contact_id in (
+            select contact_id from relation0 where patient_id = #{patient_id}
+                )
     </select>
 
     <select id="queryPatientTrackById" resultMap="PatientTrackMap">
-        select * from patients_track_info as pti
-        where pti.patient_id = #{patient_id}
+        select * from patients_track_info
+        where patient_id = #{patient_id}
     </select>
 
     <select id="queryContactTrackById" resultMap="ContactTrackMap">
-        select * from contacts_track_info as cti
-        where cti.contact_id = #{contact_id}
+        select * from contacts_track_info
+        where contact_id = #{contact_id}
     </select>
 
     <select id="queryAreaPeopleDensity" resultMap="AreaMap">
@@ -152,7 +139,8 @@
     </update>
 
     <select id="queryPotentialPatient" resultMap="ContactMap">
-        select * from contacts_info where potential_patient = 1 and contact_date = #{date} and area_code = #{areaCode}
+        select * from contacts_info
+        where potential_patient = 1 and contact_date = #{date} and area_code = #{areaCode}
     </select>
 
     <update id="clearAllPossibility">

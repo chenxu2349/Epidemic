@@ -15,4 +15,8 @@
         select distinct patient_date from patients_info
     </select>
 
+    <select id="getAllAreaCodes" resultType="java.lang.String">
+        select distinct area_code from area_info
+    </select>
+
 </mapper>

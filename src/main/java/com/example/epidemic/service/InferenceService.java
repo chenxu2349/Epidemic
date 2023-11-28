@@ -6,6 +6,7 @@ import com.example.epidemic.pojo.ContactTrack;
 import com.example.epidemic.pojo.Patient;
 import com.example.epidemic.pojo.PatientTrack;
 import com.example.epidemic.utils.Normalization;
+import com.example.epidemic.utils.RandomGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +64,8 @@ public class InferenceService {
                         // 影响因子
                         int contactTime = Normalization.contactTime(pt.getStartTime(), pt.getEndTime(), ct.getStartTime(), ct.getEndTime());
                         int maskSituation = Normalization.maskSituation(pt.getMask(), ct.getMask());
-                        double peopleDensity = mp1.queryAreaPeopleDensity(pt.getAreaId()).getPopulationDensity();
+//                        double peopleDensity = mp1.queryAreaPeopleDensity(pt.getAreaId()).getPopulationDensity();
+                        double peopleDensity = RandomGenerator.getRandomInt(0, 50);
                         int contactAge = c.getContactAge();
                         int contactSex = c.getContactSex();
                         int contactOfVaccinations = c.getContactOfVaccinations();
@@ -73,6 +75,7 @@ public class InferenceService {
                         // x1
                         if (contactTime == 0) x1 = c.hashCode() % 2 == 0 ? 0.1 : 0.15;
                         else if (contactTime > 0 && contactTime <= 30) x1 = c.hashCode() % 2 == 0 ? 0.3 : 0.35;
+
                         else if (contactTime > 30 && contactTime <= 60) x1 = c.hashCode() % 2 == 0 ? 0.5 : 0.55;
                         else x1 = System.currentTimeMillis() % 2 == 0 ? 0.7 : 0.75;
 

@@ -5,6 +5,7 @@ import com.example.epidemic.pojo.Contact;
 import com.example.epidemic.pojo.Patient;
 import com.example.epidemic.pojo.Statistics;
 import com.example.epidemic.service.InferenceService;
+import com.example.epidemic.utils.BasicInformation;
 import com.example.epidemic.utils.RandomGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,14 +27,16 @@ public class InferenceController {
 
     @Autowired
     private UtilsMapper utilsMapper;
-    private Logger logger = LoggerFactory.getLogger(InferenceController.class);
-    private static String[] areaPool = new String[]{"10001","10002","10003","10004"};
-
     @Autowired
     private InferenceService inferenceService;
+    private Logger logger = LoggerFactory.getLogger(InferenceController.class);
+    // 全部区域
+    private static List<String> areaCodePool = null;
+    // 全部日期
+    private static List<String> datePool = null;
 
     // 查看某一天某区域的患者
-    @GetMapping("/getPatients")
+    @GetMapping("/getPatientsByDateAndAreaCode")
     @ResponseBody
     public List<Patient> getPatients(@PathParam("date") String date, @PathParam("areaCode") String areaCode) {
         List<Patient> patients = new LinkedList<>();
@@ -50,7 +53,8 @@ public class InferenceController {
     public List<Patient> getPatients(@PathParam("date") String date) {
         List<Patient> patients = new LinkedList<>();
 //        String[] areaPool = new String[]{"10001","10002","10003","10004"};
-        for (String areaCode : areaPool) {
+        if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
+        for (String areaCode : areaCodePool) {
             for (Patient p : inferenceService.getPatientsByDate(date, areaCode)) patients.add(p);
         }
         if (patients.size() == 0) {
@@ -65,7 +69,8 @@ public class InferenceController {
     public List<Contact> getContacts(@PathParam("patient_id") int patient_id, @PathParam("date") String date) {
 //        String[] areaPool = new String[]{"10001","10002","10003","10004"};
         List<Contact> contacts = new LinkedList<>();
-        for (String areaCode : areaPool) {
+        if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
+        for (String areaCode : areaCodePool) {
             for (Contact c : inferenceService.getContacts(patient_id, areaCode, date)) contacts.add(c);
         }
         if (contacts.size() == 0) return null;
@@ -79,7 +84,8 @@ public class InferenceController {
         Patient p = inferenceService.getPatientById(patient_id);
 //        String[] areaPool = new String[]{"10001","10002","10003","10004"};
         List<Contact> contacts = new LinkedList<>();
-        for (String areaCode : areaPool) {
+        if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
+        for (String areaCode : areaCodePool) {
             for (Contact c : inferenceService.getContacts(patient_id, areaCode, date)) contacts.add(c);
         }
         if (contacts.size() == 0) return null;
@@ -95,9 +101,11 @@ public class InferenceController {
 //        String[] areaPool = new String[]{"10001","10002","10003","10004"};
         for (Patient p : allPatients) {
             List<Contact> contacts = new LinkedList<>();
-            for (String areaCode : areaPool) {
-                List<String> allDates = utilsMapper.getAllDates();
-                for (String date : allDates) {
+            if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
+            for (String areaCode : areaCodePool) {
+//                List<String> allDates = utilsMapper.getAllDates();
+                if (datePool == null) datePool = utilsMapper.getAllDates();
+                for (String date : datePool) {
                     // 获取这一天这个地区的该患者的所有接触者
                     for (Contact c : inferenceService.getContacts(p.getPatientId(), areaCode, date)) contacts.add(c);
                     // 推理
@@ -119,7 +127,8 @@ public class InferenceController {
     public List<Statistics> areaCount(@PathParam("date") String date) {
 //        String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
         List<Statistics> ans = new LinkedList<>();
-        for (String areaCode : areaPool) {
+        if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
+        for (String areaCode : areaCodePool) {
             Statistics s = new Statistics();
             s.setAreaCode(areaCode);
             s.setPatient(inferenceService.countPatient(areaCode, date));
@@ -144,7 +153,8 @@ public class InferenceController {
         if (areaCode.equals("all")) {
             p = 0;
             pp = 0;
-            for (String areaCode1 : areaPool) {
+            if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
+            for (String areaCode1 : areaCodePool) {
                 p += inferenceService.countPatient(areaCode1, date);
                 pp += inferenceService.countPotentialPatient(areaCode1, date);
             }

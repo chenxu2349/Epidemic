@@ -22,10 +22,13 @@ public class RelevanceController {
     private RelevanceService relevance_service;
     @Autowired
     private UtilsMapper utilsMapper;
-    private static String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
+    private static List<String> areaCodePool = null;
+    private static List<String> datePool = null;
 
 //    int count = 0;
 
+
+    // TODO 耗时过长
     // 关联分析
     @GetMapping("/relevanceAll")
     @ResponseBody
@@ -36,10 +39,11 @@ public class RelevanceController {
         // 该区域关联的全部传播链，map存某个id对应的感染者列表
         Map<Integer, List<Patient>> chainList = new HashMap<>();
         // 全部区域的患者
-        List<String> datePool = utilsMapper.getAllDates();
+        if (datePool == null) datePool = utilsMapper.getAllDates();
+        if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
         List<Patient> patients = new ArrayList<>();
         for (String date : datePool) {
-            for (String areaCode : areaPool) {
+            for (String areaCode : areaCodePool) {
                 for (Patient p : inference_service.getPatientsByDate(date, areaCode)) patients.add(p);
             }
         }
@@ -203,9 +207,10 @@ public class RelevanceController {
     @ResponseBody
     public List<Contact> getPotentialPatients(@PathParam("patient_id") int patient_id, @PathParam("date") String date) {
 
-        String[] areaPool = new String[]{"10001","10002","10003","10004"};
+//        String[] areaPool = new String[]{"10001","10002","10003","10004"};
         List<Contact> contacts = new LinkedList<>();
-        for (String areaCode : areaPool) {
+        if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
+        for (String areaCode : areaCodePool) {
             for (Contact c : inference_service.getContacts(patient_id, areaCode, date)) contacts.add(c);
         }
         List<Contact> ans = new LinkedList<>();
