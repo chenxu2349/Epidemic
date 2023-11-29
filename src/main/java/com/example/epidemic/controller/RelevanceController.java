@@ -34,6 +34,8 @@ public class RelevanceController {
     @ResponseBody
     public void relevanceAnalyse() throws ParseException {
 
+        long start = System.currentTimeMillis();
+
 //        if (count >= 1) return;
         relevance_service.clearChainInfo();
         // 该区域关联的全部传播链，map存某个id对应的感染者列表
@@ -136,12 +138,17 @@ public class RelevanceController {
         }
 
 //        count++;
+        long end = System.currentTimeMillis();
+        System.out.println("relevanceAll执行用时：" + (end - start) + "ms");
     }
 
     // 查询传播链
     @GetMapping("getRelevanceChain")
     @ResponseBody
     public List<RelevanceChainPairWithName> getRelevanceChain(@PathParam("date") String date, @PathParam("areaCode") String areaCode) {
+
+        long start = System.currentTimeMillis();
+
         List<RelevanceChainPairWithName> ans = new LinkedList<>();
         for (RelevanceChainPair p : relevance_service.getRelevanceChainPairs(date, areaCode)) {
             RelevanceChainPairWithName pN = new RelevanceChainPairWithName();
@@ -155,6 +162,9 @@ public class RelevanceController {
             pN.setPatientName2(p2.getPatientName());
             ans.add(pN);
         }
+
+        long end = System.currentTimeMillis();
+        System.out.println("getRelevanceChain执行用时：" + (end - start) + "ms");
         return ans;
     }
 
@@ -163,6 +173,8 @@ public class RelevanceController {
     @ResponseBody
     public List<Contact> findKeyPerson(@PathParam("date") String date,
                                        @PathParam("areaCode") String areaCode) throws ParseException {
+
+        long start = System.currentTimeMillis();
 
         // 经推理认定的潜在患者
         List<Contact> potentialPatients = relevance_service.getPotentialPatient(date, areaCode);
@@ -199,6 +211,8 @@ public class RelevanceController {
             }
         }
 
+        long end = System.currentTimeMillis();
+        System.out.println("keyPersonFilter执行用时：" + (end - start) + "ms");
         return keyPersons;
     }
 
@@ -206,6 +220,8 @@ public class RelevanceController {
     @GetMapping("/getPotentialPatients")
     @ResponseBody
     public List<Contact> getPotentialPatients(@PathParam("patient_id") int patient_id, @PathParam("date") String date) {
+
+        long start = System.currentTimeMillis();
 
 //        String[] areaPool = new String[]{"10001","10002","10003","10004"};
         List<Contact> contacts = new LinkedList<>();
@@ -219,6 +235,8 @@ public class RelevanceController {
             if (c.getPotentialPatient() == 1) ans.add(c);
         }
 
+        long end = System.currentTimeMillis();
+        System.out.println("getPotentialPatients执行用时：" + (end - start) + "ms");
         return ans;
     }
 }

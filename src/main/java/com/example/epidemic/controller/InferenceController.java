@@ -39,48 +39,67 @@ public class InferenceController {
     @GetMapping("/getPatientsByDateAndAreaCode")
     @ResponseBody
     public List<Patient> getPatients(@PathParam("date") String date, @PathParam("areaCode") String areaCode) {
+
+        long start = System.currentTimeMillis();
+
         List<Patient> patients = new LinkedList<>();
         for (Patient p : inferenceService.getPatientsByDate(date, areaCode)) patients.add(p);
-        if (patients.size() == 0) {
-            logger.warn("No Query Data...");
-            return null;
-        } else return patients;
+
+        if (patients.size() == 0) logger.warn("getPatientsByDateAndAreaCode: No Query Data...");
+        long end = System.currentTimeMillis();
+        System.out.println("getPatientsByDateAndAreaCode执行用时：" + (end - start) + "ms");
+
+        return patients;
     }
 
     // 查看某一天全部区域的患者
     @GetMapping("/getPatientsByDate")
     @ResponseBody
     public List<Patient> getPatients(@PathParam("date") String date) {
+
+        long start = System.currentTimeMillis();
+
         List<Patient> patients = new LinkedList<>();
 //        String[] areaPool = new String[]{"10001","10002","10003","10004"};
         if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
         for (String areaCode : areaCodePool) {
             for (Patient p : inferenceService.getPatientsByDate(date, areaCode)) patients.add(p);
         }
-        if (patients.size() == 0) {
-            logger.warn("No Query Data...");
-            return null;
-        } else return patients;
+
+        if (patients.size() == 0) logger.warn("getPatientsByDate: No Query Data...");
+        long end = System.currentTimeMillis();
+        System.out.println("getPatientsByDate执行用时：" + (end - start) + "ms");
+
+        return patients;
     }
 
     // 查看某个患者的接触者
     @GetMapping("/findContacts")
     @ResponseBody
     public List<Contact> getContacts(@PathParam("patient_id") int patient_id, @PathParam("date") String date) {
+
+        long start = System.currentTimeMillis();
+
 //        String[] areaPool = new String[]{"10001","10002","10003","10004"};
         List<Contact> contacts = new LinkedList<>();
         if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
         for (String areaCode : areaCodePool) {
             for (Contact c : inferenceService.getContacts(patient_id, areaCode, date)) contacts.add(c);
         }
-        if (contacts.size() == 0) return null;
-        else return contacts;
+
+        if (contacts.size() == 0) logger.warn("findContacts: No Query Data...");
+        long end = System.currentTimeMillis();
+        System.out.println("findContacts执行用时：" + (end - start) + "ms");
+        return contacts;
     }
 
     // 推理运算
     @GetMapping("/infer")
     @ResponseBody
     public List<Contact> inference(@PathParam("patient_id") int patient_id, @PathParam("date") String date) throws ParseException {
+
+        long start = System.currentTimeMillis();
+
         Patient p = inferenceService.getPatientById(patient_id);
 //        String[] areaPool = new String[]{"10001","10002","10003","10004"};
         List<Contact> contacts = new LinkedList<>();
@@ -88,8 +107,10 @@ public class InferenceController {
         for (String areaCode : areaCodePool) {
             for (Contact c : inferenceService.getContacts(patient_id, areaCode, date)) contacts.add(c);
         }
-        if (contacts.size() == 0) return null;
-        else return inferenceService.inference(p, contacts);
+        if (contacts.size() == 0) logger.warn("infer: No Query Data...");
+        long end = System.currentTimeMillis();
+        System.out.println("infer执行用时：" + (end - start) + "ms");
+        return inferenceService.inference(p, contacts);
     }
 
     // 推理全部患者的接触者概率，刷新数据库所有接触者患病概率
@@ -97,6 +118,9 @@ public class InferenceController {
     @GetMapping("/inferAll")
     @ResponseBody
     public void inferAll() throws ParseException {
+
+        long start = System.currentTimeMillis();
+
         List<Patient> allPatients = inferenceService.getAllPatients();
 //        String[] areaPool = new String[]{"10001","10002","10003","10004"};
         for (Patient p : allPatients) {
@@ -113,6 +137,9 @@ public class InferenceController {
                 }
             }
         }
+
+        long end = System.currentTimeMillis();
+        System.out.println("inferAll执行用时：" + (end - start) + "ms");
     }
 
     // 所有接触者概率清零
@@ -125,6 +152,9 @@ public class InferenceController {
     @GetMapping("/countPatientAndPotential")
     @ResponseBody
     public List<Statistics> areaCount(@PathParam("date") String date) {
+
+        long start = System.currentTimeMillis();
+
 //        String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
         List<Statistics> ans = new LinkedList<>();
         if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
@@ -135,6 +165,10 @@ public class InferenceController {
             s.setPotential_patient(inferenceService.countPotentialPatient(areaCode, date));
             ans.add(s);
         }
+
+        if (ans.size() == 0) logger.warn("countPatientAndPotential: No Query Data...");
+        long end = System.currentTimeMillis();
+        System.out.println("countPatientAndPotential执行用时：" + (end - start) + "ms");
         return ans;
     }
 
@@ -142,6 +176,8 @@ public class InferenceController {
     @GetMapping("/forecast")
     @ResponseBody
     public Map<Integer, int[]> trendForecast(@RequestParam("areaCode") String areaCode, @RequestParam("date") String date) {
+
+        long start = System.currentTimeMillis();
 
         Map<Integer, int[]> map = new HashMap<>();
 //        String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
@@ -174,6 +210,8 @@ public class InferenceController {
         map.put(1, arr1);
         map.put(2, arr2);
 
+        long end = System.currentTimeMillis();
+        System.out.println("forecast执行用时：" + (end - start) + "ms");
         return map;
     }
 }
