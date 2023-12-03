@@ -128,8 +128,10 @@ public class InferenceService {
             if (potentialP >= 0.6) {
                 mp1.setPotentialPatient(cId, 1);
                 c.setPotentialPatient(1);
+            } else {
+                mp1.setPotentialPatient(cId, 0);
+                c.setPotentialPatient(0);
             }
-            mp1.setPotentialPatient(cId, 0);
             mp1.setPossibility(cId, potentialP);
         }
         return contacts;
