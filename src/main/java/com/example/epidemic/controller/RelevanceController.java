@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.websocket.server.PathParam;
 import java.text.ParseException;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 @Controller
 public class RelevanceController {
@@ -71,7 +68,6 @@ public class RelevanceController {
 
         // 建立线程池
         ThreadPoolExecutor threadPool = ThreadPoolFactory.getThreadPool();
-
 
         for (; i < patients.size(); i++) {
             threadPool.execute(new Runnable() {
@@ -166,6 +162,8 @@ public class RelevanceController {
 
         }
 
+        threadPool.shutdown();
+
 //        count++;
         long end = System.currentTimeMillis();
         System.out.println("relevanceAll执行用时：" + (end - start) + "ms");
@@ -174,13 +172,13 @@ public class RelevanceController {
     // 查询传播链
     @GetMapping("getRelevanceChain")
     @ResponseBody
-    public List<RelevanceChainPairWithName> getRelevanceChain(@PathParam("date") String date, @PathParam("areaCode") String areaCode) {
+    public List<RelevanceChainPairDTO> getRelevanceChain(@PathParam("date") String date, @PathParam("areaCode") String areaCode) {
 
         long start = System.currentTimeMillis();
 
-        List<RelevanceChainPairWithName> ans = new LinkedList<>();
+        List<RelevanceChainPairDTO> ans = new LinkedList<>();
         for (RelevanceChainPair p : relevance_service.getRelevanceChainPairs(date, areaCode)) {
-            RelevanceChainPairWithName pN = new RelevanceChainPairWithName();
+            RelevanceChainPairDTO pN = new RelevanceChainPairDTO();
             pN.setCorrelationChainId(p.getCorrelationChainId());
             pN.setCorrelationChainCode(p.getCorrelationChainCode());
             pN.setPatientId1(p.getPatientId1());
@@ -189,6 +187,10 @@ public class RelevanceController {
             Patient p2 = inference_service.getPatientById(p.getPatientId2());
             pN.setPatientName1(p1.getPatientName());
             pN.setPatientName2(p2.getPatientName());
+            pN.setTel1(p1.getPatientTel());
+            pN.setTel2(p2.getPatientTel());
+            pN.setAddress1(p1.getPatientAddress());
+            pN.setAddress2(p2.getPatientAddress());
             ans.add(pN);
         }
 
@@ -270,10 +272,11 @@ public class RelevanceController {
         long start = System.currentTimeMillis();
 
 //        String[] areaPool = new String[]{"10001","10002","10003","10004"};
+        Patient p = inference_service.getPatientById(patient_id);
         List<Contact> contacts = new LinkedList<>();
         if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
         for (String areaCode : areaCodePool) {
-            for (Contact c : inference_service.getContacts(patient_id, areaCode, date)) contacts.add(c);
+            for (Contact c : inference_service.getContacts(p, areaCode, date)) contacts.add(c);
         }
         List<Contact> ans = new LinkedList<>();
 

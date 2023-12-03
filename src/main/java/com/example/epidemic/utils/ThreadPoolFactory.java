@@ -17,8 +17,9 @@ public class ThreadPoolFactory {
 
         // 系统可用处理器核心数
         int coreNumber = Runtime.getRuntime().availableProcessors();
+
         ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
-                coreNumber, coreNumber * 2, 10, TimeUnit.SECONDS,
+                coreNumber, coreNumber + 1, 10, TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(),
                 Executors.defaultThreadFactory(),
                 new ThreadPoolExecutor.AbortPolicy()

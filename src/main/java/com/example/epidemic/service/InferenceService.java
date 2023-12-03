@@ -35,19 +35,22 @@ public class InferenceService {
         return p;
     }
 
-    public List<Contact> getContacts(int patient_id, String area_code, String date) {
+    public List<Contact> getContacts(Patient p, String area_code, String date) {
+        if (!p.getAreaCode().equals(area_code) || !p.getPatientDate().equals(date)) return null;
         List<Contact> list = new LinkedList<>();
-        for (Contact c : mp1.queryContacts(patient_id, area_code, date)) list.add(c);
+        for (Contact c : mp1.queryContacts(p.getPatientId(), area_code, date)) list.add(c);
         return list;
     }
 
     public List<Contact> inference(Patient p, List<Contact> contacts) throws ParseException {
         // 病人：接触地点人流量（密度、流动性），地点的温湿度
         // 推理因子：口罩（两个人），年龄，接触时长，接触者是否打疫苗，接触者传染病史，心率，血压
+        if (contacts.size() == 0 || contacts == null) return null;
         List<PatientTrack> patientTracks = mp1.queryPatientTrackById(p.getPatientId());
         // 按id记录每个接触者的累计分数和概率
         Map<Integer, Integer> contactPotentialPoints = new HashMap<>();
         Map<Integer, Double> contactPotentialPossibility = new HashMap<>();
+        // 初始得分和概率置0
         for (Contact c : contacts) {
             contactPotentialPoints.put(c.getContactId(), 0);
             contactPotentialPossibility.put(c.getContactId(), 0.0);
@@ -56,6 +59,7 @@ public class InferenceService {
         int factors = 6;
         for (PatientTrack pt : patientTracks) {
             for (Contact c : contacts) {
+                if (contactPotentialPoints.get(c.getContactId()) > 0) continue;
                 int countPoint = 0;
                 List<ContactTrack> contactTracks = mp1.queryContactTrackById(c.getContactId());
                 for (ContactTrack ct : contactTracks) {

@@ -3,14 +3,14 @@ epidemic
 <br>
 ddl: 2023-10 (项目延期...)
 
-统计<某城市>全部区域患者和接触者
-http://localhost:8080/countPatientAndPotential?date=2023-07-28
+统计<--某城市-->全部区域患者和接触者
+http://localhost:8080/countPatientAndPotential?date=2023-07-28&cityCode=1010
 
 查找患者（某天某区域）
 http://localhost:8080/getPatientsByDateAndAreaCode?date=2023-07-28&areaCode=101010
 
-查找患者（某天<某城市>全部区域）
-http://localhost:8080/getPatientsByDate?date=2023-07-28
+查找某城市全部患者（某天<--某城市-->全部区域）
+http://localhost:8080/getPatientsByDateAndCityCode?date=2023-07-28&cityCode=1010
 
 查找某个患者的接触者
 http://localhost:8080/findContacts?patient_id=100001&date=2023-07-28
@@ -18,7 +18,7 @@ http://localhost:8080/findContacts?patient_id=100001&date=2023-07-28
 推理操作
 http://localhost:8080/infer?patient_id=100001&date=2023-07-28
 
-关联分析（直接推算所有天和地区的传播链并存入数据库）<待优化>
+关联分析（直接推算所有天和地区的传播链并存入数据库）<--待优化-->
 http://localhost:8080/relevanceAll
 
 按天和地区查询传播链
