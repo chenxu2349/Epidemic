@@ -125,7 +125,11 @@ public class InferenceService {
             // 回写数据库
             c.setPotentialPatientProbability(potentialP);
             // setDatabase(cId, potentialP);
-            if (potentialP >= 0.6) mp1.setPotentialPatient(cId, 1);
+            if (potentialP >= 0.6) {
+                mp1.setPotentialPatient(cId, 1);
+                c.setPotentialPatient(1);
+            }
+            mp1.setPotentialPatient(cId, 0);
             mp1.setPossibility(cId, potentialP);
         }
         return contacts;

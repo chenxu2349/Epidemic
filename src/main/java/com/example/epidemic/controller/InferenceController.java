@@ -7,6 +7,7 @@ import com.example.epidemic.pojo.Statistics;
 import com.example.epidemic.service.InferenceService;
 import com.example.epidemic.utils.BasicInformation;
 import com.example.epidemic.utils.RandomGenerator;
+import org.apache.commons.collections4.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.websocket.server.PathParam;
 import java.text.ParseException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 public class InferenceController {
@@ -96,7 +94,7 @@ public class InferenceController {
     // 推理运算
     @GetMapping("/infer")
     @ResponseBody
-    public List<Contact> inference(@PathParam("patient_id") int patient_id, @PathParam("date") String date) throws ParseException {
+    public List<Contact> inference(@PathParam("patient_id") int patient_id, @PathParam("date") String date) throws ParseException, InterruptedException {
 
         long start = System.currentTimeMillis();
 
@@ -108,35 +106,90 @@ public class InferenceController {
             for (Contact c : inferenceService.getContacts(patient_id, areaCode, date)) contacts.add(c);
         }
         if (contacts.size() == 0) logger.warn("infer: No Query Data...");
+
+        List<Contact> contacts1 = new ArrayList<>();
+
+        // 对contacts分片
+        int batchSize = 5; // 每个子List的长度
+        List<List<Contact>> lists = ListUtils.partition(contacts, batchSize);
+        List<Thread> threads = new ArrayList<>();
+        for (List<Contact> subContactList : lists) {
+            System.out.println("new subList");
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        for (Contact c : inferenceService.inference(p, subContactList)) {
+                            contacts1.add(c);
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("computation task complete...");
+                }
+            });
+
+            t.start();
+            threads.add(t);
+            System.out.println("thread " + t.getId() + " has started...");
+//            t.join(); // join方法放后面执行，放循环里得等线程执行完才开下一个线程
+        }
+
+        // 等待各个线程执行完
+        for (Thread t : threads) t.join();
+
+        // old version
+//        List<Contact> contacts1 = inferenceService.inference(p, contacts);
+
         long end = System.currentTimeMillis();
         System.out.println("infer执行用时：" + (end - start) + "ms");
-        return inferenceService.inference(p, contacts);
+        return contacts1;
     }
 
     // 推理全部患者的接触者概率，刷新数据库所有接触者患病概率
     // TODO 耗时过长
     @GetMapping("/inferAll")
     @ResponseBody
-    public void inferAll() throws ParseException {
+    public void inferAll() throws ParseException, InterruptedException {
 
         long start = System.currentTimeMillis();
 
         List<Patient> allPatients = inferenceService.getAllPatients();
 //        String[] areaPool = new String[]{"10001","10002","10003","10004"};
+        List<Thread> threads = new ArrayList<>();
         for (Patient p : allPatients) {
-            List<Contact> contacts = new LinkedList<>();
-            if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
-            for (String areaCode : areaCodePool) {
+
+            // 对每个患者启用一个线程去进行运算
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    List<Contact> contacts = new LinkedList<>();
+                    if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
+                    for (String areaCode : areaCodePool) {
 //                List<String> allDates = utilsMapper.getAllDates();
-                if (datePool == null) datePool = utilsMapper.getAllDates();
-                for (String date : datePool) {
-                    // 获取这一天这个地区的该患者的所有接触者
-                    for (Contact c : inferenceService.getContacts(p.getPatientId(), areaCode, date)) contacts.add(c);
-                    // 推理
-                    inferenceService.inference(p, contacts);
+                        if (datePool == null) datePool = utilsMapper.getAllDates();
+                        for (String date : datePool) {
+                            // 获取这一天这个地区的该患者的所有接触者
+                            for (Contact c : inferenceService.getContacts(p.getPatientId(), areaCode, date)) contacts.add(c);
+                            // 推理
+                            try {
+                                inferenceService.inference(p, contacts);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    System.out.println("thread computation task complete...");
                 }
-            }
+            });
+
+            t.start();
+            System.out.println("thread " + t.getId() + " has started...");
+            threads.add(t);
         }
+
+        // 等每个线程执行完再退出主线程
+        for (Thread t : threads) t.join();
 
         long end = System.currentTimeMillis();
         System.out.println("inferAll执行用时：" + (end - start) + "ms");
@@ -144,8 +197,12 @@ public class InferenceController {
 
     // 所有接触者概率清零
     @GetMapping("/clearAllPossibility")
+    @ResponseBody
     public void clearAll() {
+        long start = System.currentTimeMillis();
         inferenceService.clearAllPossibility();
+        long end = System.currentTimeMillis();
+        System.out.println("clearAllPossibility执行用时：" + (end - start) + "ms");
     }
 
     // 统计各区域患者和潜在患者数量

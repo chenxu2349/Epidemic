@@ -21,13 +21,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class DataFormController {
-
-    @Autowired
-    private InferenceService inferenceService;
-
-    @Autowired
-    private RelevanceService relevanceService;
-
     @Autowired
     private DataFormService dataFormService;
 

@@ -1,4 +1,4 @@
-package com.example.epidemic.test;
+package com.example.epidemic;
 
 
 import com.example.epidemic.controller.InferenceController;

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.epidemic.mapper.DataPrepareMapper">
+
+    <resultMap id="patientTrackMap" type="com.example.epidemic.pojo.PatientTrack">
+        <result column="patient_track_id" property="patientTrackId"></result>
+        <result column="patient_id" property="patientId"></result>
+        <result column="area_id" property="areaId"></result>
+        <result column="start_time" property="startTime"></result>
+        <result column="end_time" property="endTime"></result>
+        <result column="mask" property="mask"></result>
+        <result column="temperature" property="temperature"></result>
+        <result column="humidness" property="humidness"></result>
+    </resultMap>
+
+    <resultMap id="contactTrackMap" type="com.example.epidemic.pojo.ContactTrack">
+        <result column="contact_track_id" property="contactTrackId"></result>
+        <result column="contact_id" property="contactId"></result>
+        <result column="area_id" property="areaId"></result>
+        <result column="start_time" property="startTime"></result>
+        <result column="end_time" property="endTime"></result>
+        <result column="mask" property="mask"></result>
+        <result column="temperature" property="temperature"></result>
+        <result column="humidness" property="humidness"></result>
+    </resultMap>
+
+    <select id="getAllPti" resultMap="patientTrackMap">
+        select * from patients_track_info;
+    </select>
+
+    <select id="getAllCti" resultMap="contactTrackMap">
+        select * from contacts_track_info;
+    </select>
+
+    <update id="setPatient">
+        update contacts_track_info set patient_id = #{patientId}
+        where id = #{id}
+    </update>
+
+    <insert id="setRelation0">
+        insert into relation0 values (default, #{contactId}, #{patientId}, #{contactTime}, #{contactArea})
+    </insert>
+
+    <sql id="clearRelation0">
+        truncate relation0
+    </sql>
+
+    <select id="getAreaCodeById" resultType="String">
+        select area_code from area_info where area_id = #{area_id}
+    </select>
+
+    <select id="getPtiByRange" resultMap="patientTrackMap">
+        select * from patients_track_info
+        where area_id >= #{start} and area_id &lt;= #{end}
+    </select>
+
+    <select id="getCtiByRange" resultMap="contactTrackMap">
+        select * from contacts_track_info
+        where area_id >= #{start} and area_id &lt;= #{end}
+    </select>
+
+</mapper>

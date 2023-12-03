@@ -3,7 +3,7 @@ epidemic
 <br>
 ddl: 2023-10 (项目延期...)
 
-统计区域患者和接触者
+统计全部区域患者和接触者
 http://localhost:8080/countPatientAndPotential?date=2023-07-28
 
 查找患者（某天某区域）

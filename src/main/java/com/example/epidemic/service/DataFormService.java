@@ -20,9 +20,6 @@ public class DataFormService {
     @Autowired
     private InsertMapper insertMapper;
 
-    @Autowired
-    private TestMapper testMapper;
-
     public void insertPatient(Patient p) {
         insertMapper.insertPatient(p.getPatientName(), p.getPatientAddress(), p.getPatientTel(), p.getPatientAge(),
                 p.getPatientDate(), p.getAreaCode(), p.getPatientSymptom(), p.getPatientSex(), p.getHeartRate(), p.getBreath());

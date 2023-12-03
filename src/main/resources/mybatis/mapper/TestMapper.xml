@@ -146,7 +146,6 @@
     <update id="clearAllPossibility">
         update contacts_info
         set potential_patient_probability = 0, potential_patient = 0
-        where potential_patient_probability >= 0
     </update>
 
     <select id="queryPatientByName" resultType="java.lang.Integer">
