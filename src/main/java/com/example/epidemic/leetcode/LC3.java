@@ -851,10 +851,8 @@ package com.example.epidemic.leetcode;
 //}
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
-public class leetcode {
+public class LC3 {
     public static int maxFrequency(int[] nums, int k) {
         // 将数组进行排序
         Arrays.sort(nums);

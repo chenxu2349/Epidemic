@@ -4,6 +4,7 @@ import com.example.epidemic.mapper.DataPrepareMapper;
 import com.example.epidemic.pojo.ContactTrack;
 import com.example.epidemic.pojo.PatientTrack;
 import com.example.epidemic.utils.BasicInformation;
+import com.example.epidemic.utils.ThreadPoolFactory;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -85,6 +86,7 @@ public class DataPrepareService {
                     System.out.println("subTask complete...");
                 }
             });
+            Thread.sleep(500);
         }
         // 关闭线程池
         threadPool.shutdown();
@@ -171,5 +173,20 @@ public class DataPrepareService {
 
     public void clearRelation0() {
         mp1.clearRelation0();
+    }
+
+    public void enlargeTrackTimeSpan() {
+
+        List<PatientTrack> allPti = mp1.getAllPti();
+        List<ContactTrack> allCti = mp1.getAllCti();
+
+        List<List<PatientTrack>> ptiLists = ListUtils.partition(allPti, 200);
+        List<List<ContactTrack>> ctiLists = ListUtils.partition(allCti, 200);
+
+        ThreadPoolExecutor th
+        for (List<PatientTrack> ptiList : ptiLists) {}
+        readPool = ThreadPoolFactory.getThreadPool();
+
+        for (List<ContactTrack> ctiList : ctiLists) {}
     }
 }

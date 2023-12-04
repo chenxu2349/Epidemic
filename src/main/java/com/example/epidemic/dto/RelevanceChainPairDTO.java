@@ -1,5 +1,6 @@
-package com.example.epidemic.pojo;
+package com.example.epidemic.dto;
 
+import com.example.epidemic.pojo.RelevanceChainPair;
 import lombok.Data;
 
 // TODO 新增展示字段

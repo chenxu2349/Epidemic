@@ -4,6 +4,7 @@ package com.example.epidemic;
 import com.example.epidemic.controller.InferenceController;
 import com.example.epidemic.mapper.UtilsMapper;
 import com.example.epidemic.utils.BasicInformation;
+import com.example.epidemic.utils.IdCardUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +37,10 @@ public class DemoTest {
     @Test
     public void testStaticFunc(){
         System.out.println(inferenceController);
+    }
+
+    @Test
+    public void testIdCard() {
+        System.out.println(IdCardUtil.generateRandomIDCardNumber());
     }
 }

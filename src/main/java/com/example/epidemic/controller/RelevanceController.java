@@ -1,5 +1,6 @@
 package com.example.epidemic.controller;
 
+import com.example.epidemic.dto.RelevanceChainPairDTO;
 import com.example.epidemic.mapper.UtilsMapper;
 import com.example.epidemic.pojo.*;
 import com.example.epidemic.service.InferenceService;

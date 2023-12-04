@@ -68,7 +68,6 @@ public class InferenceService {
                         // 影响因子
                         int contactTime = Normalization.contactTime(pt.getStartTime(), pt.getEndTime(), ct.getStartTime(), ct.getEndTime());
                         int maskSituation = Normalization.maskSituation(pt.getMask(), ct.getMask());
-//                        double peopleDensity = mp1.queryAreaPeopleDensity(pt.getAreaId()).getPopulationDensity();
                         double peopleDensity = RandomGenerator.getRandomInt(0, 50);
                         int contactAge = c.getContactAge();
                         int contactSex = c.getContactSex();
@@ -78,9 +77,9 @@ public class InferenceService {
 
                         // x1
                         if (contactTime == 0) x1 = c.hashCode() % 2 == 0 ? 0.1 : 0.15;
-                        else if (contactTime > 0 && contactTime <= 30) x1 = c.hashCode() % 2 == 0 ? 0.3 : 0.35;
+                        else if (contactTime > 0 && contactTime <= 10) x1 = c.hashCode() % 2 == 0 ? 0.3 : 0.35;
 
-                        else if (contactTime > 30 && contactTime <= 60) x1 = c.hashCode() % 2 == 0 ? 0.5 : 0.55;
+                        else if (contactTime > 10 && contactTime <= 20) x1 = c.hashCode() % 2 == 0 ? 0.5 : 0.55;
                         else x1 = System.currentTimeMillis() % 2 == 0 ? 0.7 : 0.75;
 
                         // x2
@@ -111,9 +110,9 @@ public class InferenceService {
                         else x6 = c.hashCode() % 2 == 0 ? 0.5 : 0.55;
 
                         // 分数汇总
-                        if (System.currentTimeMillis() % 3 == 0) countPoint = (int)(120 * x1 + 135 * x2 + 100 * x3 + 85 * x4 + 105 * x5 + 90 * x6);
-                        else if (System.currentTimeMillis() % 3 == 1) countPoint = (int)(110 * x1 + 125 * x2 + 105 * x3 + 90 * x4 + 100 * x5 + 95 * x6);
-                        else countPoint = (int)(115 * x1 + 132 * x2 + 108 * x3 + 87 * x4 + 125 * x5 + 87 * x6);
+                        if (System.currentTimeMillis() % 3 == 0) countPoint = (int)(130 * x1 + 145 * x2 + 110 * x3 + 95 * x4 + 115 * x5 + 100 * x6);
+                        else if (System.currentTimeMillis() % 3 == 1) countPoint = (int)(120 * x1 + 135 * x2 + 115 * x3 + 100 * x4 + 110 * x5 + 105 * x6);
+                        else countPoint = (int)(125 * x1 + 142 * x2 + 118 * x3 + 97 * x4 + 135 * x5 + 97 * x6);
                     }
                 }
                 contactPotentialPoints.put(c.getContactId(), contactPotentialPoints.get(c.getContactId()) + countPoint);

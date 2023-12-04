@@ -185,7 +185,7 @@ public class InferenceController {
                 e.printStackTrace();
             }
 
-            System.out.println(p.getPatientName() + "computation complete...");
+            System.out.println(p.getPatientName() + " computation complete...");
         }
         System.out.println("All task complete...");
     }

@@ -8,23 +8,27 @@ spring:
       password: 123456
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+
     # 腾讯云
 #    url: jdbc:mysql://101.35.244.157:3306/epidemic_bk?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
 #    username: chenxu
 #    password: CX185813
 
-#    实验室16楼服务器
+    # 实验室16楼服务器
 #    url: jdbc:mysql://114.213.213.163:3306/epidemic?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
 #    username: awen
 #    password: 123456
-#    test
 
     # 实验室阿里云服务器
-    url: jdbc:mysql://139.224.233.133:3306/epidemic?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-    username: root
-    password: CX185813
+#    url: jdbc:mysql://139.224.233.133:3306/epidemic?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+#    username: root
+#    password: CX185813
 
-    type: com.alibaba.druid.pool.DruidDataSource
+    # 本地
+    url: jdbc:mysql://localhost:3306/epidemic?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
 
 mybatis:
   #  mapper对应的xml
