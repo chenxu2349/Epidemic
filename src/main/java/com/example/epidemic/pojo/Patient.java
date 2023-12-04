@@ -9,6 +9,7 @@ public class Patient {
     private String areaCode;
     private String patientName;
     private String patientAddress;
+    private String patientIdentity;
     private String patientTel;
     private int patientSymptom;
     private int patientAge;

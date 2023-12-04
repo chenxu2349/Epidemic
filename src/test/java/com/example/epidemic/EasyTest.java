@@ -15,14 +15,14 @@ public class EasyTest {
     @Test
     public void idCardTest() {
         System.out.println("一组随机身份证号:");
-        System.out.println(IdCardUtil.generateRandomIDCardNumber());
-        System.out.println(IdCardUtil.generateRandomIDCardNumber());
-        System.out.println(IdCardUtil.generateRandomIDCardNumber());
-        System.out.println(IdCardUtil.generateRandomIDCardNumber());
-        System.out.println(IdCardUtil.generateRandomIDCardNumber());
-        System.out.println(IdCardUtil.generateRandomIDCardNumber());
-        System.out.println(IdCardUtil.generateRandomIDCardNumber());
-        System.out.println(IdCardUtil.generateRandomIDCardNumber());
+        System.out.println(IdCardUtil.generateID());
+        System.out.println(IdCardUtil.generateID());
+        System.out.println(IdCardUtil.generateID());
+        System.out.println(IdCardUtil.generateID());
+        System.out.println(IdCardUtil.generateID());
+        System.out.println(IdCardUtil.generateID());
+        System.out.println(IdCardUtil.generateID());
+        System.out.println(IdCardUtil.generateID());
     }
 
     @Test

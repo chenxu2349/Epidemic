@@ -11,6 +11,7 @@ public class Contact {
     private int contactSex;
     private String contactTel;
     private String contactAddress;
+    private String contactIdentity;
     private int contactOfVaccinations;
     private int contactHistoryOfIllness;
     private double potentialPatientProbability;

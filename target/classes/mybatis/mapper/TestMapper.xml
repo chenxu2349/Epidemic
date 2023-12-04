@@ -10,6 +10,7 @@
         <result column="area_code" property="areaCode"></result>
         <result column="patient_name" property="patientName"></result>
         <result column="patient_address" property="patientAddress"></result>
+        <result column="patient_identity" property="patientIdentity"></result>
         <result column="patient_tel" property="patientTel"></result>
         <result column="patient_symptom" property="patientSymptom"></result>
         <result column="patient_age" property="patientAge"></result>
@@ -27,6 +28,7 @@
         <result column="contact_sex" property="contactSex"></result>
         <result column="contact_tel" property="contactTel"></result>
         <result column="contact_address" property="contactAddress"></result>
+        <result column="contact_identity" property="contactIdentity"></result>
         <result column="contact_of_vaccinations" property="contactOfVaccinations"></result>
         <result column="contact_history_of_illness" property="contactHistoryOfIllness"></result>
         <result column="potential_patient_probability" property="potentialPatientProbability"></result>
@@ -48,7 +50,7 @@
     </resultMap>
 
     <resultMap id="ContactTrackMap" type="com.example.epidemic.pojo.ContactTrack">
-        <result column="contacts_track_id" property="contactsTrackId"></result>
+        <result column="contact_track_id" property="contactTrackId"></result>
         <result column="contact_id" property="contactId"></result>
         <result column="area_id" property="areaId"></result>
         <result column="start_time" property="startTime"></result>

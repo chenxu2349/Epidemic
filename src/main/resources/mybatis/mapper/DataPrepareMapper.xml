@@ -16,7 +16,7 @@
     </resultMap>
 
     <resultMap id="contactTrackMap" type="com.example.epidemic.pojo.ContactTrack">
-        <result column="contacts_track_id" property="contactsTrackId"></result>
+        <result column="contact_track_id" property="contactTrackId"></result>
         <result column="contact_id" property="contactId"></result>
         <result column="area_id" property="areaId"></result>
         <result column="start_time" property="startTime"></result>
@@ -24,6 +24,40 @@
         <result column="mask" property="mask"></result>
         <result column="temperature" property="temperature"></result>
         <result column="humidness" property="humidness"></result>
+    </resultMap>
+
+    <resultMap id="PatientMap" type="com.example.epidemic.pojo.Patient">
+        <result column="patient_id" property="patientId"></result>
+        <result column="epidemic_id" property="epidemicId"></result>
+        <result column="area_code" property="areaCode"></result>
+        <result column="patient_name" property="patientName"></result>
+        <result column="patient_address" property="patientAddress"></result>
+        <result column="patient_identity" property="patientIdentity"></result>
+        <result column="patient_tel" property="patientTel"></result>
+        <result column="patient_symptom" property="patientSymptom"></result>
+        <result column="patient_age" property="patientAge"></result>
+        <result column="patient_sex" property="patientSex"></result>
+        <result column="heart_rate" property="heartRate"></result>
+        <result column="breath" property="breath"></result>
+        <result column="patient_date" property="patientDate"></result>
+    </resultMap>
+
+    <resultMap id="ContactMap" type="com.example.epidemic.pojo.Contact">
+        <result column="contact_id" property="contactId"></result>
+        <result column="contact_name" property="contactName"></result>
+        <result column="area_code" property="areaCode"></result>
+        <result column="contact_age" property="contactAge"></result>
+        <result column="contact_sex" property="contactSex"></result>
+        <result column="contact_tel" property="contactTel"></result>
+        <result column="contact_address" property="contactAddress"></result>
+        <result column="contact_identity" property="contactIdentity"></result>
+        <result column="contact_of_vaccinations" property="contactOfVaccinations"></result>
+        <result column="contact_history_of_illness" property="contactHistoryOfIllness"></result>
+        <result column="potential_patient_probability" property="potentialPatientProbability"></result>
+        <result column="potential_patient" property="potentialPatient"></result>
+        <result column="heart_rate" property="heartRate"></result>
+        <result column="breath" property="breath"></result>
+        <result column="contact_date" property="contactDate"></result>
     </resultMap>
 
     <select id="getAllPti" resultMap="patientTrackMap">
@@ -72,5 +106,21 @@
         set start_time = #{start}, end_time = #{end}
         where contacts_track_id = #{id}
     </update>
+
+    <update id="setPatientIdentity">
+        update patients_info set patient_identity = #{ID} where patient_id = #{patient_id}
+    </update>
+
+    <update id="setContactIdentity">
+        update contacts_info set contact_identity = #{ID} where contact_id = #{contact_id}
+    </update>
+
+    <select id="getAllPatient" resultMap="PatientMap">
+        select * from patients_info;
+    </select>
+
+    <select id="getAllContact" resultMap="ContactMap">
+        select * from contacts_info;
+    </select>
 
 </mapper>

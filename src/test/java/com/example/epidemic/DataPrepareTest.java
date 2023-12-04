@@ -1,9 +1,15 @@
 package com.example.epidemic;
 
 import com.example.epidemic.mapper.DataPrepareMapper;
+import com.example.epidemic.pojo.Contact;
+import com.example.epidemic.pojo.ContactTrack;
+import com.example.epidemic.pojo.Patient;
+import com.example.epidemic.pojo.PatientTrack;
 import com.example.epidemic.service.DataPrepareService;
+import com.example.epidemic.utils.IdCardUtil;
 import com.example.epidemic.utils.ThreadPoolFactory;
 import com.example.epidemic.utils.TimeUtil;
+import org.apache.commons.collections4.ListUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -85,5 +93,55 @@ public class DataPrepareTest {
         String s2 = TimeUtil.enlargeStart(s1);
         String e2 = TimeUtil.enlargeEnd(e1);
         dataPrepareMapper.setCtiTimeById(1, s2, e2);
+    }
+
+    @Test
+    public void setIdentity() throws InterruptedException {
+
+        List<Patient> allPatient = dataPrepareMapper.getAllPatient();
+        List<Contact> allContact = dataPrepareMapper.getAllContact();
+
+        List<List<Patient>> pLists = ListUtils.partition(allPatient, 500);
+        List<List<Contact>> cLists = ListUtils.partition(allContact, 1000);
+
+        ThreadPoolExecutor threadPool = ThreadPoolFactory.getThreadPool();
+        List<Thread> threads = new ArrayList<>();
+
+//        for (List<Patient> list : pLists) {
+//            threadPool.execute(new Runnable() {
+//                @Override
+//                public void run() {
+//                    System.out.println("sub patient task start...");
+//                    for (Patient p : list) {
+//                        int id = p.getPatientId();
+//                        int age = p.getPatientAge();
+//                        dataPrepareMapper.setPatientIdentity(id, IdCardUtil.generateIDByAge(age));
+//                    }
+//                    System.out.println("sub patient task over...");
+//                }
+//            });
+//            Thread.sleep(500);
+//        }
+
+        for (List<Contact> list : cLists) {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("sub contact task start...");
+                    for (Contact c : list) {
+                        int id = c.getContactId();
+                        int age = c.getContactAge();
+                        dataPrepareMapper.setContactIdentity(id, IdCardUtil.generateIDByAge(age));
+                    }
+                    System.out.println("sub contact task over...");
+                }
+            });
+            t.start();
+            threads.add(t);
+        }
+
+        for (Thread t : threads) t.join();
+
+        threadPool.shutdown();
     }
 }

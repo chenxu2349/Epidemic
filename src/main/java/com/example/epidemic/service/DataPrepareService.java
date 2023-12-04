@@ -187,24 +187,24 @@ public class DataPrepareService {
         List<Thread> threadList = new ArrayList<>();
         ThreadPoolExecutor threadPool = ThreadPoolFactory.getThreadPool();
 
-//        for (List<PatientTrack> list : ptiLists) {
-//            Thread t = new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    System.out.println("pti task start...");
-//                    for (PatientTrack pt : list) {
-//                        String start = pt.getStartTime();
-//                        String end = pt.getEndTime();
-//                        String newStart = TimeUtil.enlargeStart(start);
-//                        String newEnd = TimeUtil.enlargeEnd(end);
-//                        mp1.setPtiTimeById(pt.getPatientTrackId(), newStart, newEnd);
-//                    }
-//                    System.out.println("pti task end...");
-//                }
-//            });
-//            t.start();
-//            threadList.add(t);
-//        }
+        for (List<PatientTrack> list : ptiLists) {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("pti task start...");
+                    for (PatientTrack pt : list) {
+                        String start = pt.getStartTime();
+                        String end = pt.getEndTime();
+                        String newStart = TimeUtil.enlargeStart(start);
+                        String newEnd = TimeUtil.enlargeEnd(end);
+                        mp1.setPtiTimeById(pt.getPatientTrackId(), newStart, newEnd);
+                    }
+                    System.out.println("pti task end...");
+                }
+            });
+            t.start();
+            threadList.add(t);
+        }
 
         for (List<ContactTrack> list : ctiLists) {
             Thread t = new Thread(new Runnable() {
@@ -216,7 +216,7 @@ public class DataPrepareService {
                         String end = ct.getEndTime();
                         String newStart = TimeUtil.enlargeStart(start);
                         String newEnd = TimeUtil.enlargeEnd(end);
-                        mp1.setCtiTimeById(ct.getContactsTrackId(), newStart, newEnd);
+                        mp1.setCtiTimeById(ct.getContactTrackId(), newStart, newEnd);
                     }
                     System.out.println("cti task end...");
                 }

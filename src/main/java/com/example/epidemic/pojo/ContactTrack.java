@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class ContactTrack {
 
-    private int contactsTrackId;
+    private int contactTrackId;
     private int contactId;
     private int areaId;
     private String startTime;

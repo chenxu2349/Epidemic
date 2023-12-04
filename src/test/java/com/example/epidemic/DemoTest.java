@@ -41,6 +41,6 @@ public class DemoTest {
 
     @Test
     public void testIdCard() {
-        System.out.println(IdCardUtil.generateRandomIDCardNumber());
+        System.out.println(IdCardUtil.generateID());
     }
 }
