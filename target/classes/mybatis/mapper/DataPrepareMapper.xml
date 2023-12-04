@@ -16,7 +16,7 @@
     </resultMap>
 
     <resultMap id="contactTrackMap" type="com.example.epidemic.pojo.ContactTrack">
-        <result column="contact_track_id" property="contactTrackId"></result>
+        <result column="contacts_track_id" property="contactsTrackId"></result>
         <result column="contact_id" property="contactId"></result>
         <result column="area_id" property="areaId"></result>
         <result column="start_time" property="startTime"></result>
@@ -60,5 +60,17 @@
         select * from contacts_track_info
         where area_id >= #{start} and area_id &lt;= #{end}
     </select>
+
+    <update id="setPtiTimeById">
+        update patients_track_info
+        set start_time = #{start}, end_time = #{end}
+        where patient_track_id = #{id}
+    </update>
+
+    <update id="setCtiTimeById">
+        update contacts_track_info
+        set start_time = #{start}, end_time = #{end}
+        where contacts_track_id = #{id}
+    </update>
 
 </mapper>

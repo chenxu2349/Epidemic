@@ -85,7 +85,10 @@ public class InferenceController {
         List<Contact> contacts = new LinkedList<>();
         if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
         for (String areaCode : areaCodePool) {
-            for (Contact c : inferenceService.getContacts(p, areaCode, date)) contacts.add(c);
+            List<Contact> list = inferenceService.getContacts(p, areaCode, date);
+            if (list != null) {
+                for (Contact c : list) contacts.add(c);
+            }
         }
 
         if (contacts.size() == 0) logger.warn("findContacts: No Query Data...");
@@ -106,7 +109,10 @@ public class InferenceController {
         List<Contact> contacts = new LinkedList<>();
         if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
         for (String areaCode : areaCodePool) {
-            for (Contact c : inferenceService.getContacts(p, areaCode, date)) contacts.add(c);
+            List<Contact> list = inferenceService.getContacts(p, areaCode, date);
+            if (list != null) {
+                for (Contact c : list) contacts.add(c);
+            }
         }
         if (contacts.size() == 0) logger.warn("infer: No Query Data...");
 

@@ -27,8 +27,13 @@ public class DruidConfig {
     public ServletRegistrationBean druidServletRegistrationBean(){
         ServletRegistrationBean<Servlet> servletRegistrationBean = new ServletRegistrationBean<>(new StatViewServlet(),"/druid/*");
         Map<String,String> initParams = new HashMap<>();
-        initParams.put("loginUsername","root");
-        initParams.put("loginPassword","CX185813");
+//        initParams.put("loginUsername","root");
+//        initParams.put("loginPassword","CX185813");
+        initParams.put("initialSize", "8");
+        initParams.put("maxActive", "50");
+        initParams.put("minIdle", "5");
+        initParams.put("maxIdle", "10");
+        initParams.put("maxWait", "60000");
         //后台允许谁可以访问
         //initParams.put("allow", "localhost")：表示只有本机可以访问
         //initParams.put("allow", "")：为空或者为null时，表示允许所有访问

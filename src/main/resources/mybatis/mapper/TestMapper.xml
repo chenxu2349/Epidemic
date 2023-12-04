@@ -48,7 +48,7 @@
     </resultMap>
 
     <resultMap id="ContactTrackMap" type="com.example.epidemic.pojo.ContactTrack">
-        <result column="contact_track_id" property="contactTrackId"></result>
+        <result column="contacts_track_id" property="contactsTrackId"></result>
         <result column="contact_id" property="contactId"></result>
         <result column="area_id" property="areaId"></result>
         <result column="start_time" property="startTime"></result>

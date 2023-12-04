@@ -5,6 +5,7 @@ import com.example.epidemic.pojo.ContactTrack;
 import com.example.epidemic.pojo.PatientTrack;
 import com.example.epidemic.utils.BasicInformation;
 import com.example.epidemic.utils.ThreadPoolFactory;
+import com.example.epidemic.utils.TimeUtil;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -175,18 +176,57 @@ public class DataPrepareService {
         mp1.clearRelation0();
     }
 
-    public void enlargeTrackTimeSpan() {
+    public void enlargeTrackTimeSpan() throws InterruptedException {
 
         List<PatientTrack> allPti = mp1.getAllPti();
         List<ContactTrack> allCti = mp1.getAllCti();
 
-        List<List<PatientTrack>> ptiLists = ListUtils.partition(allPti, 200);
-        List<List<ContactTrack>> ctiLists = ListUtils.partition(allCti, 200);
+        List<List<PatientTrack>> ptiLists = ListUtils.partition(allPti, 3000);
+        List<List<ContactTrack>> ctiLists = ListUtils.partition(allCti, 3000);
 
-        ThreadPoolExecutor th
-        for (List<PatientTrack> ptiList : ptiLists) {}
-        readPool = ThreadPoolFactory.getThreadPool();
+        List<Thread> threadList = new ArrayList<>();
+        ThreadPoolExecutor threadPool = ThreadPoolFactory.getThreadPool();
 
-        for (List<ContactTrack> ctiList : ctiLists) {}
+//        for (List<PatientTrack> list : ptiLists) {
+//            Thread t = new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    System.out.println("pti task start...");
+//                    for (PatientTrack pt : list) {
+//                        String start = pt.getStartTime();
+//                        String end = pt.getEndTime();
+//                        String newStart = TimeUtil.enlargeStart(start);
+//                        String newEnd = TimeUtil.enlargeEnd(end);
+//                        mp1.setPtiTimeById(pt.getPatientTrackId(), newStart, newEnd);
+//                    }
+//                    System.out.println("pti task end...");
+//                }
+//            });
+//            t.start();
+//            threadList.add(t);
+//        }
+
+        for (List<ContactTrack> list : ctiLists) {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("cti task start...");
+                    for (ContactTrack ct : list) {
+                        String start = ct.getStartTime();
+                        String end = ct.getEndTime();
+                        String newStart = TimeUtil.enlargeStart(start);
+                        String newEnd = TimeUtil.enlargeEnd(end);
+                        mp1.setCtiTimeById(ct.getContactsTrackId(), newStart, newEnd);
+                    }
+                    System.out.println("cti task end...");
+                }
+            });
+            t.start();
+            threadList.add(t);
+        }
+
+        for (Thread t : threadList) t.join();
+
+        threadPool.shutdown();
     }
 }

@@ -1,7 +1,9 @@
 package com.example.epidemic;
 
+import com.example.epidemic.mapper.DataPrepareMapper;
 import com.example.epidemic.service.DataPrepareService;
 import com.example.epidemic.utils.ThreadPoolFactory;
+import com.example.epidemic.utils.TimeUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class DataPrepareTest {
 
     @Autowired
     private DataPrepareService dataPrepareService;
+
+    @Autowired
+    private DataPrepareMapper dataPrepareMapper;
 
 //    @Test
 //    public void check() throws ParseException, InterruptedException {
@@ -68,5 +73,17 @@ public class DataPrepareTest {
     }
 
     @Test
-    public void enlargeTimeSpanTest() {}
+    public void enlargeTimeSpanTest() throws InterruptedException {
+        dataPrepareService.enlargeTrackTimeSpan();
+        System.out.println("All Computation complete...");
+    }
+
+    @Test
+    public void test1() {
+        String s1 = "2023-07-01 12:00:00";
+        String e1 = "2023-07-01 19:00:00";
+        String s2 = TimeUtil.enlargeStart(s1);
+        String e2 = TimeUtil.enlargeEnd(e1);
+        dataPrepareMapper.setCtiTimeById(1, s2, e2);
+    }
 }

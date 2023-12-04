@@ -277,7 +277,10 @@ public class RelevanceController {
         List<Contact> contacts = new LinkedList<>();
         if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
         for (String areaCode : areaCodePool) {
-            for (Contact c : inference_service.getContacts(p, areaCode, date)) contacts.add(c);
+            List<Contact> list = inference_service.getContacts(p, areaCode, date);
+            if (list != null) {
+                for (Contact c : list) contacts.add(c);
+            }
         }
         List<Contact> ans = new LinkedList<>();
 

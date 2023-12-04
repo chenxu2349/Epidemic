@@ -21,14 +21,14 @@ spring:
 #    password: 123456
 
     # 实验室阿里云服务器
-#    url: jdbc:mysql://139.224.233.133:3306/epidemic?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-#    username: root
-#    password: CX185813
+    url: jdbc:mysql://139.224.233.133:3306/epidemic?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: CX185813
 
     # 本地
-    url: jdbc:mysql://localhost:3306/epidemic?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-    username: root
-    password: 123456
+#    url: jdbc:mysql://localhost:3306/epidemic?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+#    username: root
+#    password: 123456
 
 mybatis:
   #  mapper对应的xml

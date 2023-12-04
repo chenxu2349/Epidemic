@@ -18,6 +18,8 @@ public interface DataPrepareMapper {
     List<ContactTrack> getAllCti();
     List<PatientTrack> getPtiByRange(int start, int end);
     List<ContactTrack> getCtiByRange(int start, int end);
+    void setPtiTimeById(int id, String start, String end);
+    void setCtiTimeById(int id, String start, String end);
 
     void setPatient(int id, int contactId, int patientId);
 
