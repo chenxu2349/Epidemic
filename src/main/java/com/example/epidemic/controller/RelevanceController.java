@@ -28,8 +28,7 @@ public class RelevanceController {
     private UtilsMapper utilsMapper;
     private static List<String> areaCodePool = null;
     private static List<String> datePool = null;
-    // relevanceAll时用到的变量
-    static int chainId = 0, i = 0;
+
 
 //    int count = 0;
 
@@ -38,136 +37,31 @@ public class RelevanceController {
     // 关联分析
     @GetMapping("/relevanceAll")
     @ResponseBody
-    public void relevanceAnalyse() throws ParseException {
-
-        long start = System.currentTimeMillis();
-
-//        if (count >= 1) return;
-        relevance_service.clearChainInfo();
-        // 该区域关联的全部传播链，map存某个id对应的感染者列表
-        Map<Integer, List<Patient>> chainList = new HashMap<>();
-        // 全部区域的患者
-        if (datePool == null) datePool = utilsMapper.getAllDates();
+    public String relevanceAll() throws InterruptedException {
         if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
-        List<Patient> patients = new ArrayList<>();
-        for (String date : datePool) {
-            for (String areaCode : areaCodePool) {
-                for (Patient p : inference_service.getPatientsByDate(date, areaCode)) patients.add(p);
-            }
-        }
+        if (datePool == null) datePool = utilsMapper.getAllDates();
 
-        Map<Integer, List<PatientTrack>> ptMap = new HashMap<>();   // 这个人去过哪些地方
-        Map<Integer, Integer> chainIdMap = new HashMap<>(); // 某个患者在哪个传播链id上
-        Set<Integer> hasInChain = new HashSet<>();  // 已经在传播链中的人
-
-        // 填充每个人的行动轨迹
-        for (Patient p : patients) {
-            int pId = p.getPatientId();
-            List<PatientTrack> pTrack = relevance_service.getPatientTrackById(pId);
-            ptMap.put(pId, pTrack);
-        }
-
-        // 建立线程池
+//        relevance_service.clearChainInfo();
         ThreadPoolExecutor threadPool = ThreadPoolFactory.getThreadPool();
 
-        for (; i < patients.size(); i++) {
-            threadPool.execute(new Runnable() {
-                @Override
-                public void run() {
-                    int iPid = patients.get(i).getPatientId();
-                    if (!hasInChain.contains(iPid)) {
-                        // 先向后找，有没有已经上链的且和i有时空交集的
-                        boolean basicCheck = false;
-                        for (int j = i + 1; j < patients.size(); j++) {
-                            Patient pi = patients.get(i);
-                            Patient pj = patients.get(j);
-                            try {
-                                if (relevance_service.checkTwoPerson(pi, pj) && hasInChain.contains(pj.getPatientId())) {
-                                    basicCheck = true;
-                                    int cId = chainIdMap.get(pj.getPatientId());
-                                    List<Patient> list = chainList.get(cId);
-                                    list.add(pi);
-                                    chainList.put(cId, list);
-                                    chainIdMap.put(pi.getPatientId(), cId);
-                                    hasInChain.add(pi.getPatientId());
-
-                                    // 记录pair
-                                    String areaCode1 = pi.getAreaCode();
-                                    relevance_service.setChainPair(cId, areaCode1, pi.getPatientId(), pj.getPatientId());
-                                    relevance_service.setChainPair(cId, areaCode1, pj.getPatientId(), pi.getPatientId());
-                                    break;
-                                }
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (basicCheck) return;
-
-                        Chain c = new Chain();
-                        c.setChainId(chainId);
-                        List<Patient> list = new LinkedList<>();
-                        list.add(patients.get(i));
-                        chainIdMap.put(iPid, chainId);
-                        hasInChain.add(iPid);
-                        // 向后匹配
-                        for (int j = i + 1; j < patients.size(); j++) {
-                            Patient pi = patients.get(i);
-                            Patient pj = patients.get(j);
-                            try {
-                                if (relevance_service.checkTwoPerson(pi, pj)) {
-                                    // 存在时空交集，患者j上链
-                                    list.add(pj);
-                                    chainIdMap.put(pj.getPatientId(), chainId);
-                                    hasInChain.add(pj.getPatientId());
-
-                                    // 记录pair
-                                    String areaCode1 = pi.getAreaCode();
-                                    relevance_service.setChainPair(chainId, areaCode1, pi.getPatientId(), pj.getPatientId());
-                                    relevance_service.setChainPair(chainId, areaCode1, pj.getPatientId(), pi.getPatientId());
-                                    break;
-                                }
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        c.setChainPatients(list);
-                        chainList.put(chainId, list);
-                        chainId++;
-                    } else {
-                        int cId = chainIdMap.get(iPid);
-                        for (int j = i + 1; j < patients.size(); j++) {
-                            Patient pi = patients.get(i);
-                            Patient pj = patients.get(j);
-                            try {
-                                if (relevance_service.checkTwoPerson(pi, pj) && !hasInChain.contains(pj.getPatientId())) {
-                                    // 左边的i已经在链上，吸纳新成员j上链
-                                    List<Patient> list = chainList.get(cId);
-                                    list.add(pj);
-                                    chainIdMap.put(pj.getPatientId(), cId);
-                                    hasInChain.add(pj.getPatientId());
-
-                                    // 记录pair
-                                    String areaCode1 = pi.getAreaCode();
-                                    relevance_service.setChainPair(cId, areaCode1, pi.getPatientId(), pj.getPatientId());
-                                    relevance_service.setChainPair(cId, areaCode1, pj.getPatientId(), pi.getPatientId());
-
-                                    chainList.put(cId, list);
-                                }
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
+        for (String areaCode : areaCodePool) {
+            for (String date : datePool) {
+                threadPool.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            relevance_service.relevanceByDateAndAreaCode(date, areaCode);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
                         }
                     }
-                }
-            });
-
+                });
+                Thread.sleep(200);
+            }
         }
-
+        System.out.println("All computation complete...");
         threadPool.shutdown();
-
-//        count++;
-        long end = System.currentTimeMillis();
-        System.out.println("relevanceAll执行用时：" + (end - start) + "ms");
+        return "success";
     }
 
     // 查询传播链
