@@ -62,8 +62,7 @@ public class InferenceController {
         List<Patient> patients = new LinkedList<>();
 //        String[] areaPool = new String[]{"10001","10002","10003","10004"};
         if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
-        for (String areaCode : areaCodePool) {
-            if (!areaCode.startsWith(cityCode)) continue;
+        for (String areaCode : BasicInformation.getCityAreas(cityCode)) {
             for (Patient p : inferenceService.getPatientsByDate(date, areaCode)) patients.add(p);
         }
 
@@ -217,8 +216,7 @@ public class InferenceController {
 //        String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
         List<Statistics> ans = new LinkedList<>();
         if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
-        for (String areaCode : areaCodePool) {
-            if (!areaCode.startsWith(cityCode)) continue;
+        for (String areaCode : BasicInformation.getCityAreas(cityCode)) {
             Statistics s = new Statistics();
             s.setAreaCode(areaCode);
             s.setPatient(inferenceService.countPatient(areaCode, date));
@@ -233,9 +231,9 @@ public class InferenceController {
     }
 
     // 趋势预测，预测后两天的患者和潜在患者数量
-    @GetMapping("/forecast")
+    @GetMapping("/forecastArea")
     @ResponseBody
-    public Map<Integer, int[]> trendForecast(@RequestParam("areaCode") String areaCode, @RequestParam("date") String date) {
+    public Map<Integer, int[]> trendForecastAreaCode(@RequestParam("areaCode") String areaCode, @RequestParam("date") String date) {
 
         long start = System.currentTimeMillis();
 
@@ -271,7 +269,43 @@ public class InferenceController {
         map.put(2, arr2);
 
         long end = System.currentTimeMillis();
-        System.out.println("forecast执行用时：" + (end - start) + "ms");
+        System.out.println("forecastArea执行用时：" + (end - start) + "ms");
+        return map;
+    }
+
+    // 趋势预测，预测后两天的患者和潜在患者数量
+    @GetMapping("/forecastCity")
+    @ResponseBody
+    public Map<Integer, int[]> trendForecastCityCode(@RequestParam("cityCode") String cityCode, @RequestParam("date") String date) {
+
+        long start = System.currentTimeMillis();
+
+        Map<Integer, int[]> map = new HashMap<>();
+//        String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
+        double[] randomPool1 = new double[]{1.1, 1.2, 1.3};
+        double[] randomPool2 = new double[]{1.3, 1.4, 1.5};
+
+        // 今天，明天，后天预测数据(患者，潜在患者)
+        int p = 0, pp = 0;
+//        if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
+        for (String areaCode1 : BasicInformation.getCityAreas(cityCode)) {
+            p += inferenceService.countPatient(areaCode1, date);
+            pp += inferenceService.countPotentialPatient(areaCode1, date);
+        }
+
+        int seed1 = RandomGenerator.getRandomInt(0, 2);
+        int seed2 = RandomGenerator.getRandomInt(0, 2);
+        int seed3 = RandomGenerator.getRandomInt(0, 2);
+        int seed4 = RandomGenerator.getRandomInt(0, 2);
+        int[] arr0 = new int[]{p, pp};
+        int[] arr1 = new int[]{(int) (p * randomPool1[seed1]), (int) (pp * randomPool1[seed2])};
+        int[] arr2 = new int[]{(int) (p * randomPool2[seed3]), (int) (pp * randomPool2[seed4])};
+        map.put(0, arr0);
+        map.put(1, arr1);
+        map.put(2, arr2);
+
+        long end = System.currentTimeMillis();
+        System.out.println("forecastArea执行用时：" + (end - start) + "ms");
         return map;
     }
 }

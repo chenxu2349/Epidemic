@@ -95,6 +95,7 @@ public class DataPrepareTest {
         dataPrepareMapper.setCtiTimeById(1, s2, e2);
     }
 
+    // 给患者和接触者加上身份证号
     @Test
     public void setIdentity() throws InterruptedException {
 
@@ -107,21 +108,22 @@ public class DataPrepareTest {
         ThreadPoolExecutor threadPool = ThreadPoolFactory.getThreadPool();
         List<Thread> threads = new ArrayList<>();
 
-//        for (List<Patient> list : pLists) {
-//            threadPool.execute(new Runnable() {
-//                @Override
-//                public void run() {
-//                    System.out.println("sub patient task start...");
-//                    for (Patient p : list) {
-//                        int id = p.getPatientId();
-//                        int age = p.getPatientAge();
-//                        dataPrepareMapper.setPatientIdentity(id, IdCardUtil.generateIDByAge(age));
-//                    }
-//                    System.out.println("sub patient task over...");
-//                }
-//            });
-//            Thread.sleep(500);
-//        }
+        for (List<Patient> list : pLists) {
+            threadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("sub patient task start...");
+                    for (Patient p : list) {
+                        int id = p.getPatientId();
+                        int age = p.getPatientAge();
+                        String areaCode = p.getAreaCode();
+                        dataPrepareMapper.setPatientIdentity(id, IdCardUtil.generateIDByAgeAndAreaCode(age, areaCode));
+                    }
+                    System.out.println("sub patient task over...");
+                }
+            });
+            Thread.sleep(500);
+        }
 
         for (List<Contact> list : cLists) {
             Thread t = new Thread(new Runnable() {
@@ -131,7 +133,8 @@ public class DataPrepareTest {
                     for (Contact c : list) {
                         int id = c.getContactId();
                         int age = c.getContactAge();
-                        dataPrepareMapper.setContactIdentity(id, IdCardUtil.generateIDByAge(age));
+                        String areaCode = c.getAreaCode();
+                        dataPrepareMapper.setContactIdentity(id, IdCardUtil.generateIDByAgeAndAreaCode(age, areaCode));
                     }
                     System.out.println("sub contact task over...");
                 }

@@ -26,18 +26,19 @@ public class IdCardUtil {
 
     }
 
-    public static String generateIDByAge(int age) {
+    public static String generateIDByAgeAndAreaCode(int age, String areaCode) {
 
         Random random = new Random();
-        int provinceIndex = random.nextInt(province.length);
-        int cityCode = 100+ random.nextInt(555);
+//        int provinceIndex = random.nextInt(province.length);
+//        int cityCode = 100+ random.nextInt(555);
         int year = 2023 - age;
         int month = 1 + random.nextInt(11);
         String monthString = month < 10 ? ("0" + month) : String.valueOf(month);
         int day = 1 + random.nextInt(28);
         String dayString = day < 10 ? ("0" + day) : String.valueOf(day);
         int serialNumber = random.nextInt(8999) + 1000; // 最后4位是随机数
-        String idCardNumber = province[provinceIndex] + "0" + cityCode + year + monthString + dayString + serialNumber;
+//        String idCardNumber = province[provinceIndex] + "0" + cityCode + year + monthString + dayString + serialNumber;
+        String idCardNumber = areaCode + year + monthString + dayString + serialNumber;
         return idCardNumber;
 
     }

@@ -48,11 +48,7 @@ public class DataPrepareService {
         List<Thread> threads = new ArrayList<>();
 
         // 创建线程池
-//        ThreadPoolExecutor threadPool = ThreadPoolFactory.getThreadPool();
-        ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
-                1, 1, 20, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(), Executors.defaultThreadFactory(), new ThreadPoolExecutor.AbortPolicy()
-        );
+        ThreadPoolExecutor threadPool = ThreadPoolFactory.getThreadPool();
 
         for (List<PatientTrack> subPtiList : lists) {
             // 启用一个线程去匹配subPtiList里的患者轨迹和全部接触者轨迹
