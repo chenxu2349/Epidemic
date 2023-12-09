@@ -33,7 +33,7 @@ public class DruidConfig {
         initParams.put("maxActive", "50");
         initParams.put("minIdle", "5");
         initParams.put("maxIdle", "10");
-        initParams.put("maxWait", "60000");
+        initParams.put("maxWait", "6000000");
         //后台允许谁可以访问
         //initParams.put("allow", "localhost")：表示只有本机可以访问
         //initParams.put("allow", "")：为空或者为null时，表示允许所有访问

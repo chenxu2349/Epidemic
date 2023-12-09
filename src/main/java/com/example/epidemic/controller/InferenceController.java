@@ -125,75 +125,78 @@ public class InferenceController {
 
     // 推理全部患者的接触者概率，刷新数据库所有接触者患病概率
     // TODO 耗时过长
-//    @GetMapping("/inferAll")
-//    @ResponseBody
-//    public void inferAll() throws ParseException, InterruptedException {
-//
-//        List<Patient> allPatients = inferenceService.getAllPatients();
-//        List<List<Patient>> lists = ListUtils.partition(allPatients, 500);
-//        ThreadPoolExecutor threadPool = ThreadPoolFactory.getThreadPool();
-//
-//        for (List<Patient> list : lists) {
-//            threadPool.execute(new Runnable() {
-//                @Override
-//                public void run() {
-//                    System.out.println("new thread started...");
-//
-//                    for (Patient p : list) {
-//                        List<Contact> contacts = new LinkedList<>();
-//                        if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
-//                        for (String areaCode : areaCodePool) {
-//                            if (datePool == null) datePool = utilsMapper.getAllDates();
-//                            for (String date : datePool) {
-//                                // 获取这一天这个地区的该患者的所有接触者
-//                                for (Contact c : inferenceService.getContacts(p, areaCode, date)) contacts.add(c);
-//                                try {
-//                                    inferenceService.inference(p, contacts);
-//                                } catch (ParseException e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//                        }
-//                    }
-//
-//                    System.out.println("thread computation task complete...");
-//                }
-//            });
-//        }
-//
-//        threadPool.shutdown();
-//
-//    }
-
     @GetMapping("/inferAll")
     @ResponseBody
     public void inferAll() throws ParseException, InterruptedException {
 
-        System.out.println("computation started...");
         List<Patient> allPatients = inferenceService.getAllPatients();
+        List<List<Patient>> lists = ListUtils.partition(allPatients, 500);
+        ThreadPoolExecutor threadPool = ThreadPoolFactory.getThreadPool();
 
-        for (Patient p : allPatients) {
-            List<Contact> contacts = new LinkedList<>();
-            if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
-            for (String areaCode : areaCodePool) {
-                if (datePool == null) datePool = utilsMapper.getAllDates();
-                for (String date : datePool) {
-                    // 获取这一天这个地区的该患者的所有接触者
-                    List<Contact> list = inferenceService.getContacts(p, areaCode, date);
-                    if (list != null) {for (Contact c : list) contacts.add(c);}
+        for (List<Patient> list : lists) {
+            threadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("new thread started...");
+
+                    for (Patient p : list) {
+                        List<Contact> contacts = new LinkedList<>();
+                        if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
+                        for (String areaCode : areaCodePool) {
+                            if (datePool == null) datePool = utilsMapper.getAllDates();
+                            for (String date : datePool) {
+                                // 获取这一天这个地区的该患者的所有接触者
+                                List<Contact> list = inferenceService.getContacts(p, areaCode, date);
+                                if (list != null) {
+                                    for (Contact c : list) contacts.add(c);
+                                }
+                            }
+                        }
+                        try {
+                            inferenceService.inference(p, contacts);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    System.out.println("thread computation task complete...");
                 }
-            }
-            // 推理
-            try {
-                inferenceService.inference(p, contacts);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-            System.out.println(p.getPatientName() + " computation complete...");
+            });
         }
-        System.out.println("All task complete...");
+
+        threadPool.shutdown();
+
     }
+
+//    @GetMapping("/inferAll")
+//    @ResponseBody
+//    public void inferAll() throws ParseException, InterruptedException {
+//
+//        System.out.println("computation started...");
+//        List<Patient> allPatients = inferenceService.getAllPatients();
+//
+//        for (Patient p : allPatients) {
+//            List<Contact> contacts = new LinkedList<>();
+//            if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
+//            for (String areaCode : areaCodePool) {
+//                if (datePool == null) datePool = utilsMapper.getAllDates();
+//                for (String date : datePool) {
+//                    // 获取这一天这个地区的该患者的所有接触者
+//                    List<Contact> list = inferenceService.getContacts(p, areaCode, date);
+//                    if (list != null) {for (Contact c : list) contacts.add(c);}
+//                }
+//            }
+//            // 推理
+//            try {
+//                inferenceService.inference(p, contacts);
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
+//
+//            System.out.println(p.getPatientName() + " computation complete...");
+//        }
+//        System.out.println("All task complete...");
+//    }
 
 
     // 所有接触者概率清零

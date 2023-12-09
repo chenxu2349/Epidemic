@@ -19,7 +19,7 @@ public class ThreadPoolFactory {
         int coreNumber = Runtime.getRuntime().availableProcessors();
 
         ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
-                coreNumber, coreNumber + 1, 10, TimeUnit.SECONDS,
+                coreNumber, coreNumber + 1, 1000, TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(),
                 Executors.defaultThreadFactory(),
                 new ThreadPoolExecutor.AbortPolicy()

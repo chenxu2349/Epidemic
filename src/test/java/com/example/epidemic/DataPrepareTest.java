@@ -1,6 +1,8 @@
 package com.example.epidemic;
 
 import com.example.epidemic.mapper.DataPrepareMapper;
+import com.example.epidemic.mapper.TestMapper;
+import com.example.epidemic.mapper.UtilsMapper;
 import com.example.epidemic.pojo.Contact;
 import com.example.epidemic.pojo.ContactTrack;
 import com.example.epidemic.pojo.Patient;
@@ -33,9 +35,12 @@ public class DataPrepareTest {
 
     @Autowired
     private DataPrepareService dataPrepareService;
-
     @Autowired
     private DataPrepareMapper dataPrepareMapper;
+    @Autowired
+    private UtilsMapper utilsMapper;
+    @Autowired
+    private TestMapper testMapper;
 
 //    @Test
 //    public void check() throws ParseException, InterruptedException {
@@ -63,13 +68,13 @@ public class DataPrepareTest {
 //        threadPool.shutdown();
 //    }
 
+    // 填充relation0表
     @Test
     public void check() throws ParseException, InterruptedException {
         // 全部区域编码
-        String[] areaCodePool = new String[]{"101010", "101011", "101012", "101013",
-                "101014", "111010", "121010", "121011", "121012", "121013"};
+        List<String> allAreaCodes = utilsMapper.getAllAreaCodes();
 
-        for (String areaCode : areaCodePool) {
+        for (String areaCode : allAreaCodes) {
             try {
                 dataPrepareService.check(areaCode);
             } catch (ParseException e) {
@@ -146,5 +151,10 @@ public class DataPrepareTest {
         for (Thread t : threads) t.join();
 
         threadPool.shutdown();
+    }
+
+    @Test
+    public void clearAllPossibility() {
+        testMapper.clearAllPossibility();
     }
 }

@@ -44,7 +44,7 @@ public class DataPrepareService {
 //        String code = mp1.getAreaCodeById(3);
 
         // 切分allPti
-        List<List<PatientTrack>> lists = ListUtils.partition(allPti, 50);
+        List<List<PatientTrack>> lists = ListUtils.partition(allPti, 150);
         List<Thread> threads = new ArrayList<>();
 
         // 创建线程池
@@ -83,7 +83,7 @@ public class DataPrepareService {
                     System.out.println("subTask complete...");
                 }
             });
-            Thread.sleep(500);
+            Thread.sleep(800);
         }
         // 关闭线程池
         threadPool.shutdown();
