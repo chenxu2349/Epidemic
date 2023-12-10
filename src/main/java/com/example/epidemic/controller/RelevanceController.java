@@ -98,61 +98,49 @@ public class RelevanceController {
     @GetMapping("/keyPersonFilter")
     @ResponseBody
     public List<Contact> findKeyPerson(@PathParam("date") String date,
-                                       @PathParam("areaCode") String areaCode) throws ParseException {
+                                       @PathParam("areaCode") String areaCode) throws ParseException, InterruptedException {
 
         long start = System.currentTimeMillis();
 
         // 经推理认定的潜在患者
         List<Contact> potentialPatients = relevance_service.getPotentialPatient(date, areaCode);
-        Map<Integer, List<ContactTrack>> ctMap = new HashMap<>();
-        for (Contact c : potentialPatients) {
-            int cId = c.getContactId();
-            List<ContactTrack> contactTracks = relevance_service.getContactTrackById(cId);
-            ctMap.put(cId, contactTracks);
-        }
-
-        // 全部区域的患者
-        List<Patient> patients = new ArrayList<>();
-        Map<Integer, List<PatientTrack>> ptMap = new HashMap<>();   // 这个人去过哪些地方
-        // String[] areaPool = new String[]{"10001","10002","10003","10004"};
-        for (Patient p : inference_service.getPatientsByDate(date, areaCode)) patients.add(p);
-        for (Patient p : patients) {
-            int pId = p.getPatientId();
-            List<PatientTrack> patientTracks = relevance_service.getPatientTrackById(pId);
-            ptMap.put(pId, patientTracks);
-        }
+        if (potentialPatients == null || potentialPatients.size() == 0) return null;
+        // 该天该区域的全部患者
+        List<Patient> patients = inference_service.getPatientsByDate(date, areaCode);
 
         // 筛查重点对象
         List<Contact> keyPersons = new LinkedList<>();
         // 潜在患者分片
         List<List<Contact>> lists = ListUtils.partition(potentialPatients, 10);
         // 创建线程池
-        ThreadPoolExecutor threadPool = ThreadPoolFactory.getThreadPool();
-        for (List<Contact> list : lists) {
-            threadPool.execute(new Runnable() {
+        List<Thread> threads = new ArrayList<>();
+
+        for (Contact c : potentialPatients) {
+            Thread t = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    for (Contact c : list) {
-                        int count = 0;
-                        for (Patient p : patients) {
-                            try {
-                                if (relevance_service.checkTwoPerson(p, c)) {
-                                    count++;
-                                }
-                            } catch (ParseException e) {
-                                e.printStackTrace();
+                    int count = 0;
+                    for (Patient p : patients) {
+                        try {
+                            if (relevance_service.checkTwoPerson(p, c)) {
+                                count++;
                             }
-                            if (count >= 2) {
-                                keyPersons.add(c);
-                                break;
-                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        if (count >= 2) {
+                            keyPersons.add(c);
+                            break;
                         }
                     }
                 }
             });
+            t.start();
+            threads.add(t);
         }
 
-        threadPool.shutdown();
+        // 等待所有线程异步执行完
+        for (Thread t : threads) t.join();
 
         long end = System.currentTimeMillis();
         System.out.println("keyPersonFilter执行用时：" + (end - start) + "ms");

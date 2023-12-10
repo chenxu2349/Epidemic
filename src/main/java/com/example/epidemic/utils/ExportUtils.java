@@ -14,7 +14,10 @@ import java.util.List;
  **/
 public class ExportUtils {
 
-    public static void exportCsv(ArrayList<String> data, String filePath) {
+    public static void exportCsv(ArrayList<String> data, String filePath) throws IOException {
+
+        File file = new File(filePath);
+        if (!file.exists()) file.createNewFile();
 
         try {
             FileWriter fileWriter = new FileWriter(filePath);
