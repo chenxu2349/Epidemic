@@ -114,7 +114,7 @@ public class InferenceService {
                         else if (System.currentTimeMillis() % 3 == 1) countPoint = (int)(120 * x1 + 135 * x2 + 115 * x3 + 100 * x4 + 110 * x5 + 105 * x6);
                         else countPoint = (int)(125 * x1 + 142 * x2 + 118 * x3 + 97 * x4 + 135 * x5 + 97 * x6);
 
-                        countPoint += 90;
+                        countPoint += 50;
                     }
                 }
                 contactPotentialPoints.put(c.getContactId(), contactPotentialPoints.get(c.getContactId()) + countPoint);

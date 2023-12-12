@@ -32,7 +32,6 @@ public class RelevanceService {
 
     // 关联分析一个区域的一天
     public void relevanceByDateAndAreaCode(String date, String areaCode) throws ParseException {
-        System.out.println(areaCode + " " + date + "sub task start...");
 
         // 该区域关联的全部传播链，map存某个id对应的感染者列表
         Map<Integer, List<Patient>> chainList = new HashMap<>();
@@ -139,7 +138,6 @@ public class RelevanceService {
                 }
             }
         }
-        System.out.println(areaCode + " " + date + "sub task end...");
     }
 
     // 检查患者之间的交集

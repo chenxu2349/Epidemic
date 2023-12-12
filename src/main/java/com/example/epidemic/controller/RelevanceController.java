@@ -41,25 +41,26 @@ public class RelevanceController {
         if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
         if (datePool == null) datePool = utilsMapper.getAllDates();
 
-//        relevance_service.clearChainInfo();
+        relevance_service.clearChainInfo();
         ThreadPoolExecutor threadPool = ThreadPoolFactory.getThreadPool();
 
         for (String areaCode : areaCodePool) {
-            for (String date : datePool) {
-                threadPool.execute(new Runnable() {
-                    @Override
-                    public void run() {
+            threadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println(areaCode + "sub task started...");
+                    for (String date : datePool) {
                         try {
                             relevance_service.relevanceByDateAndAreaCode(date, areaCode);
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
                     }
-                });
-                Thread.sleep(200);
-            }
+                    System.out.println(areaCode + "sub task end...");
+                }
+            });
         }
-        System.out.println("All computation complete...");
+
         threadPool.shutdown();
         return "success";
     }
