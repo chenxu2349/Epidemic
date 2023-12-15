@@ -241,9 +241,8 @@ public class InferenceController {
         long start = System.currentTimeMillis();
 
         Map<Integer, int[]> map = new HashMap<>();
-//        String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
-        double[] randomPool1 = new double[]{1.1, 1.2, 1.3};
-        double[] randomPool2 = new double[]{1.3, 1.4, 1.5};
+        double[] randomPool1 = new double[]{1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 1.4};
+        double[] randomPool2 = new double[]{1.45, 1.5, 1.55, 1.6, 1.65, 1.7, 1.75};
 
         // 今天，明天，后天预测数据(患者，潜在患者)
         int p, pp;
@@ -260,16 +259,26 @@ public class InferenceController {
             pp = inferenceService.countPotentialPatient(areaCode, date);
         }
 
-        int seed1 = RandomGenerator.getRandomInt(0, 2);
-        int seed2 = RandomGenerator.getRandomInt(0, 2);
-        int seed3 = RandomGenerator.getRandomInt(0, 2);
-        int seed4 = RandomGenerator.getRandomInt(0, 2);
         int[] arr0 = new int[]{p, pp};
-        int[] arr1 = new int[]{(int) (p * randomPool1[seed1]), (int) (pp * randomPool1[seed2])};
-        int[] arr2 = new int[]{(int) (p * randomPool2[seed3]), (int) (pp * randomPool2[seed4])};
+        int[] arr1 = new int[]{(int) (p * randomPool1[RandomGenerator.getRandomInt(0, 6)]),
+                (int) (pp * randomPool1[RandomGenerator.getRandomInt(0, 6)])};
+        int[] arr2 = new int[]{(int) (p * randomPool1[RandomGenerator.getRandomInt(0, 6)]),
+                (int) (pp * randomPool1[RandomGenerator.getRandomInt(0, 6)])};
+        int[] arr3 = new int[]{(int) (p * randomPool1[RandomGenerator.getRandomInt(0, 6)]),
+                (int) (pp * randomPool1[RandomGenerator.getRandomInt(0, 6)])};
+        int[] arr4 = new int[]{(int) (p * randomPool2[RandomGenerator.getRandomInt(0, 6)]),
+                (int) (pp * randomPool2[RandomGenerator.getRandomInt(0, 6)])};
+        int[] arr5 = new int[]{(int) (p * randomPool2[RandomGenerator.getRandomInt(0, 6)]),
+                (int) (pp * randomPool2[RandomGenerator.getRandomInt(0, 6)])};
+        int[] arr6 = new int[]{(int) (p * randomPool2[RandomGenerator.getRandomInt(0, 6)]),
+                (int) (pp * randomPool2[RandomGenerator.getRandomInt(0, 6)])};
         map.put(0, arr0);
         map.put(1, arr1);
         map.put(2, arr2);
+        map.put(3, arr3);
+        map.put(4, arr4);
+        map.put(5, arr5);
+        map.put(6, arr6);
 
         long end = System.currentTimeMillis();
         System.out.println("forecastArea执行用时：" + (end - start) + "ms");
@@ -285,8 +294,8 @@ public class InferenceController {
 
         Map<Integer, int[]> map = new HashMap<>();
 //        String[] areaPool = new String[]{"10001", "10002", "10003", "10004"};
-        double[] randomPool1 = new double[]{1.1, 1.2, 1.3};
-        double[] randomPool2 = new double[]{1.3, 1.4, 1.5};
+        double[] randomPool1 = new double[]{1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 1.4};
+        double[] randomPool2 = new double[]{1.45, 1.5, 1.55, 1.6, 1.65, 1.7, 1.75};
 
         // 今天，明天，后天预测数据(患者，潜在患者)
         int p = 0, pp = 0;
@@ -296,19 +305,29 @@ public class InferenceController {
             pp += inferenceService.countPotentialPatient(areaCode1, date);
         }
 
-        int seed1 = RandomGenerator.getRandomInt(0, 2);
-        int seed2 = RandomGenerator.getRandomInt(0, 2);
-        int seed3 = RandomGenerator.getRandomInt(0, 2);
-        int seed4 = RandomGenerator.getRandomInt(0, 2);
         int[] arr0 = new int[]{p, pp};
-        int[] arr1 = new int[]{(int) (p * randomPool1[seed1]), (int) (pp * randomPool1[seed2])};
-        int[] arr2 = new int[]{(int) (p * randomPool2[seed3]), (int) (pp * randomPool2[seed4])};
+        int[] arr1 = new int[]{(int) (p * randomPool1[RandomGenerator.getRandomInt(0, 6)]),
+                (int) (pp * randomPool1[RandomGenerator.getRandomInt(0, 6)])};
+        int[] arr2 = new int[]{(int) (p * randomPool1[RandomGenerator.getRandomInt(0, 6)]),
+                (int) (pp * randomPool1[RandomGenerator.getRandomInt(0, 6)])};
+        int[] arr3 = new int[]{(int) (p * randomPool1[RandomGenerator.getRandomInt(0, 6)]),
+                (int) (pp * randomPool1[RandomGenerator.getRandomInt(0, 6)])};
+        int[] arr4 = new int[]{(int) (p * randomPool2[RandomGenerator.getRandomInt(0, 6)]),
+                (int) (pp * randomPool2[RandomGenerator.getRandomInt(0, 6)])};
+        int[] arr5 = new int[]{(int) (p * randomPool2[RandomGenerator.getRandomInt(0, 6)]),
+                (int) (pp * randomPool2[RandomGenerator.getRandomInt(0, 6)])};
+        int[] arr6 = new int[]{(int) (p * randomPool2[RandomGenerator.getRandomInt(0, 6)]),
+                (int) (pp * randomPool2[RandomGenerator.getRandomInt(0, 6)])};
         map.put(0, arr0);
         map.put(1, arr1);
         map.put(2, arr2);
+        map.put(3, arr3);
+        map.put(4, arr4);
+        map.put(5, arr5);
+        map.put(6, arr6);
 
         long end = System.currentTimeMillis();
-        System.out.println("forecastArea执行用时：" + (end - start) + "ms");
+        System.out.println("forecastCity执行用时：" + (end - start) + "ms");
         return map;
     }
 }
