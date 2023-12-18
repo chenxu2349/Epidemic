@@ -131,10 +131,8 @@
     </select>
 
     <update id="setPossibility">
-        <if test="potential_patient_probability &lt;= 0.1">
-            update contacts_info set potential_patient_probability = #{possibility}
-            where contact_id = #{contactId}
-        </if>
+        update contacts_info set potential_patient_probability = #{possibility}
+        where contact_id = #{contactId} and potential_patient_probability &lt;= 0.1
     </update>
 
     <update id="setPotentialPatient">
