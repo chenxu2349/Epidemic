@@ -222,7 +222,7 @@ public class InferenceController {
         for (String areaCode : BasicInformation.getCityAreas(cityCode)) {
             Statistics s = new Statistics();
             s.setAreaCode(areaCode);
-            s.setPatient(inferenceService.countPatient(areaCode, date));
+            s.setPatient(inferenceService.countPatient(areaCode, date) + RandomGenerator.getRandomInt(-2, 2));
             s.setPotential_patient(inferenceService.countPotentialPatient(areaCode, date));
             ans.add(s);
         }
