@@ -42,10 +42,20 @@ public class InferenceService {
         return list;
     }
 
-    public List<Contact> inference(Patient p, List<Contact> contacts) throws ParseException {
+    public List<Contact> inference(Patient p, List<Contact> allContacts) throws ParseException {
+
+        if (allContacts.size() == 0 || allContacts == null) return null;
+
         // 病人：接触地点人流量（密度、流动性），地点的温湿度
         // 推理因子：口罩（两个人），年龄，接触时长，接触者是否打疫苗，接触者传染病史，心率，血压
-        if (contacts.size() == 0 || contacts == null) return null;
+
+        List<Contact> contacts = new ArrayList<>();
+        List<Contact> contactsExist = new ArrayList<>();
+        for (Contact c : allContacts) {
+            if (c.getPotentialPatientProbability() <= 0.01) contacts.add(c);
+            else contactsExist.add(c);
+        }
+
         List<PatientTrack> patientTracks = mp1.queryPatientTrackById(p.getPatientId());
         // 按id记录每个接触者的累计分数和概率
         Map<Integer, Integer> contactPotentialPoints = new HashMap<>();
@@ -139,6 +149,8 @@ public class InferenceService {
             }
             mp1.setPossibility(cId, potentialP);
         }
+
+        for (Contact c : contactsExist) contacts.add(c);
         return contacts;
     }
 

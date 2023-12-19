@@ -132,7 +132,7 @@
 
     <update id="setPossibility">
         update contacts_info set potential_patient_probability = #{possibility}
-        where contact_id = #{contactId} and potential_patient_probability &lt;= 0.1
+        where contact_id = #{contactId}
     </update>
 
     <update id="setPotentialPatient">
