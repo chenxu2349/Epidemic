@@ -5,6 +5,7 @@ import com.example.epidemic.mapper.UtilsMapper;
 import com.example.epidemic.pojo.*;
 import com.example.epidemic.service.InferenceService;
 import com.example.epidemic.service.RelevanceService;
+import com.example.epidemic.utils.BasicInformation;
 import com.example.epidemic.utils.ThreadPoolFactory;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +95,33 @@ public class RelevanceController {
         System.out.println("getRelevanceChain执行用时：" + (end - start) + "ms");
         return ans;
     }
+
+    @GetMapping("/getCityRelevanceChain")
+    @ResponseBody
+    public List<RelevanceChainPairDTO> getCityRelevanceChain(@PathParam("date") String date, @PathParam("cityCode") String cityCode) {
+        Set<String> areas = BasicInformation.getCityAreas(cityCode);
+        List<RelevanceChainPairDTO> ans = new LinkedList<>();
+        for (String areaCode : areas) {
+            for (RelevanceChainPair p : relevance_service.getRelevanceChainPairs(date, areaCode)) {
+                RelevanceChainPairDTO pN = new RelevanceChainPairDTO();
+                pN.setCorrelationChainId(p.getCorrelationChainId());
+                pN.setCorrelationChainCode(p.getCorrelationChainCode());
+                pN.setPatientId1(p.getPatientId1());
+                pN.setPatientId2(p.getPatientId2());
+                Patient p1 = inference_service.getPatientById(p.getPatientId1());
+                Patient p2 = inference_service.getPatientById(p.getPatientId2());
+                pN.setPatientName1(p1.getPatientName());
+                pN.setPatientName2(p2.getPatientName());
+                pN.setTel1(p1.getPatientTel());
+                pN.setTel2(p2.getPatientTel());
+                pN.setAddress1(p1.getPatientAddress());
+                pN.setAddress2(p2.getPatientAddress());
+                ans.add(pN);
+            }
+        }
+        return ans;
+    }
+
 
     // 从认定的潜在患者中(>=60%)筛选接触了多个感染者的重点对象
     @GetMapping("/keyPersonFilter")
