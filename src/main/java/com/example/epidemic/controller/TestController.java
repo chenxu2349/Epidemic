@@ -44,7 +44,12 @@ public class TestController {
         int b = RandomGenerator.getRandomInt(1,9);
         double sum = (double) a / (double) b + (double) base;
 
-        Thread.sleep(1500);
+        int randomDelete = RandomGenerator.getRandomInt(21, 31);
+        for (int i = 0; i < randomDelete; i++) {
+            finalTestMapper.deleteChainInfoById(186 - i);
+        }
+
+        Thread.sleep(1400);
 
         // 保留两位小数
         DecimalFormat df = new DecimalFormat("#.00");

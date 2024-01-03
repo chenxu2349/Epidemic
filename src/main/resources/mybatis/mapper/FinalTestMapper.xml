@@ -23,4 +23,8 @@
               c1.potential_patient = c2.potential_patient
     </select>
 
+    <delete id="deleteChainInfoById">
+        delete from corelation_chain_info where id = #{id}
+    </delete>
+
 </mapper>

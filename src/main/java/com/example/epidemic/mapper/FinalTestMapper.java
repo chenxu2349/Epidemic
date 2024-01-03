@@ -15,4 +15,6 @@ public interface FinalTestMapper {
     int getAllContactsCount();
 
     int getMatchContacts();
+
+    void deleteChainInfoById(int id);
 }
