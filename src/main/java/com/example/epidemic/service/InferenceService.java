@@ -78,53 +78,42 @@ public class InferenceService {
                         // 影响因子
                         int contactTime = Normalization.contactTime(pt.getStartTime(), pt.getEndTime(), ct.getStartTime(), ct.getEndTime());
                         int maskSituation = Normalization.maskSituation(pt.getMask(), ct.getMask());
-                        double peopleDensity = RandomGenerator.getRandomInt(0, 50);
+                        double peopleDensity = 35.0;
                         int contactAge = c.getContactAge();
                         int contactSex = c.getContactSex();
                         int contactOfVaccinations = c.getContactOfVaccinations();
                         // 影响因子权重系数
                         double x1 = 0.0, x2 = 0.0, x3 = 0.0, x4 = 0.0, x5 = 0.0, x6 = 0.0;
-
                         // x1
-                        if (contactTime == 0) x1 = c.hashCode() % 2 == 0 ? 0.1 : 0.15;
-                        else if (contactTime > 0 && contactTime <= 10) x1 = c.hashCode() % 2 == 0 ? 0.3 : 0.35;
-
-                        else if (contactTime > 10 && contactTime <= 20) x1 = c.hashCode() % 2 == 0 ? 0.5 : 0.55;
-                        else x1 = System.currentTimeMillis() % 2 == 0 ? 0.7 : 0.75;
-
+                        if (contactTime == 0) x1 = 0.1;
+                        else if (contactTime > 0 && contactTime <= 10) x1 = 0.35;
+                        else if (contactTime > 10 && contactTime <= 20) x1 = 0.55;
+                        else x1 = 0.7;
                         // x2
                         switch (maskSituation) {
-                            case 1 : x2 = c.hashCode() % 2 == 0 ? 0.1 : 0.15; break;
-                            case 3 : x2 = c.hashCode() % 2 == 0 ? 0.4 : 0.45; break;
-                            case 9 : x2 = c.hashCode() % 2 == 0 ? 0.8 : 0.85; break;
+                            case 1 : x2 = 0.15; break;
+                            case 3 : x2 = 0.45; break;
+                            case 9 : x2 = 0.85; break;
                         }
-
                         // x3
                         if (peopleDensity <= 10) x3 = 0.3;
                         else if (peopleDensity > 10 && peopleDensity <= 30) x3 = 0.5;
                         else x3 = 0.7;
-
                         // x4
-                        if (contactAge < 10) x4 = c.hashCode() % 2 == 0 ? 0.6 : 0.65;
-                        else if (contactAge >= 10 && contactAge < 25) x4 = c.hashCode() % 2 == 0 ? 0.3 : 0.35;
-                        else if (contactAge >= 25 && contactAge < 55) x4 = c.hashCode() % 2 == 0 ? 0.28 : 0.32;
-                        else if (contactAge >= 55 && contactAge < 75) x4 = c.hashCode() % 2 == 0 ? 0.57 : 0.63;
-                        else x4 = c.hashCode() % 2 == 0 ? 0.73 : 0.8;
-
+                        if (contactAge < 10) x4 = 0.65;
+                        else if (contactAge >= 10 && contactAge < 25) x4 = 0.35;
+                        else if (contactAge >= 25 && contactAge < 55) x4 = 0.32;
+                        else if (contactAge >= 55 && contactAge < 75) x4 = 0.57;
+                        else x4 = 0.8;
                         // x5
-                        if (contactSex == 1) x5 = c.hashCode() % 2 == 0 ? 0.4 : 0.45;
-                        else x5 = c.hashCode() % 2 == 0 ? 0.6 : 0.65;
-
+                        if (contactSex == 1) x5 = 0.4;
+                        else x5 = 0.6;
                         // x6
-                        if (contactOfVaccinations == 1) x6 = c.hashCode() % 2 == 0 ? 0.23 : 0.3;
-                        else x6 = c.hashCode() % 2 == 0 ? 0.5 : 0.55;
-
+                        if (contactOfVaccinations == 1) x6 = 0.3;
+                        else x6 = 0.5;
                         // 分数汇总
-                        if (System.currentTimeMillis() % 3 == 0) countPoint = (int)(130 * x1 + 145 * x2 + 110 * x3 + 95 * x4 + 115 * x5 + 100 * x6);
-                        else if (System.currentTimeMillis() % 3 == 1) countPoint = (int)(120 * x1 + 135 * x2 + 115 * x3 + 100 * x4 + 110 * x5 + 105 * x6);
-                        else countPoint = (int)(125 * x1 + 142 * x2 + 118 * x3 + 97 * x4 + 135 * x5 + 97 * x6);
-
-                        countPoint += 50;
+                        countPoint = (int)(130 * x1 + 145 * x2 + 110 * x3 + 95 * x4 + 115 * x5 + 100 * x6);
+                        countPoint += RandomGenerator.getRandomInt(-150, 150);
                     }
                 }
                 contactPotentialPoints.put(c.getContactId(), contactPotentialPoints.get(c.getContactId()) + countPoint);

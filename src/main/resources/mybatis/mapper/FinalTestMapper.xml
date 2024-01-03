@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.epidemic.mapper.AreaMapper">
+<mapper namespace="com.example.epidemic.mapper.FinalTestMapper">
 
     <resultMap id="AreaMap" type="com.example.epidemic.pojo.Area">
         <result column="area_id" property="areaId"></result>
@@ -13,12 +13,14 @@
         <result column="area_name" property="areaName"></result>
     </resultMap>
 
-    <select id="getAllAreas" resultMap="AreaMap">
-        select * from area_info
+    <select id="getAllContactsCount" resultType="java.lang.Integer">
+        select count(*) from contacts_info
     </select>
 
-    <select id="getAreas" resultMap="AreaMap">
-        select * from area_info where area_id >= #{from} and area_id &lt;= #{to}
+    <select id="getMatchContacts" resultType="java.lang.Integer">
+        select count(c1.contact_id) from contacts_info as c1, contacts_info_copy1 as c2
+        where c1.contact_id = c2.contact_id and
+              c1.potential_patient = c2.potential_patient
     </select>
 
 </mapper>

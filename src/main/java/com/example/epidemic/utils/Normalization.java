@@ -45,7 +45,6 @@ public class Normalization {
 
     // 佩戴口罩情况, 0-10代表感染风险
     public static int maskSituation(int a, int b) {
-        int seed = (int)(0 + Math.random()*(16 - 0 + 1));
         if (a == 1 && b == 1) return 1;
         else if (a == 1 || b == 1) return 3;
         else return 9;

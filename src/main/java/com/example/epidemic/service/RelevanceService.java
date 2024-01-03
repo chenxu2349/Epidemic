@@ -227,4 +227,7 @@ public class RelevanceService {
         }
         return "clear success";
     }
+
+    public void checkTwoChain() {
+    }
 }

@@ -233,7 +233,7 @@ public class InferenceController {
         return ans;
     }
 
-    // 趋势预测，预测后两天的患者和潜在患者数量
+    // 趋势预测，预测后一周的患者和潜在患者数量
     @GetMapping("/forecastArea")
     @ResponseBody
     public Map<Integer, int[]> trendForecastAreaCode(@RequestParam("areaCode") String areaCode, @RequestParam("date") String date) {
@@ -244,7 +244,7 @@ public class InferenceController {
         double[] randomPool1 = new double[]{1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 1.4};
         double[] randomPool2 = new double[]{1.45, 1.5, 1.55, 1.6, 1.65, 1.7, 1.75};
 
-        // 今天，明天，后天预测数据(患者，潜在患者)
+        // 后一周的预测数据(患者，潜在患者)
         int p, pp;
         if (areaCode.equals("all")) {
             p = 0;
@@ -285,7 +285,7 @@ public class InferenceController {
         return map;
     }
 
-    // 趋势预测，预测后两天的患者和潜在患者数量
+    // 趋势预测，预测后一周的患者和潜在患者数量
     @GetMapping("/forecastCity")
     @ResponseBody
     public Map<Integer, int[]> trendForecastCityCode(@RequestParam("cityCode") String cityCode, @RequestParam("date") String date) {
@@ -297,7 +297,7 @@ public class InferenceController {
         double[] randomPool1 = new double[]{1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 1.4};
         double[] randomPool2 = new double[]{1.45, 1.5, 1.55, 1.6, 1.65, 1.7, 1.75};
 
-        // 今天，明天，后天预测数据(患者，潜在患者)
+        // 后一周的预测数据(患者，潜在患者)
         int p = 0, pp = 0;
 //        if (areaCodePool == null) areaCodePool = utilsMapper.getAllAreaCodes();
         for (String areaCode1 : BasicInformation.getCityAreas(cityCode)) {

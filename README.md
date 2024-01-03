@@ -57,3 +57,12 @@ http://localhost:8080/inferAll
 
 清空全部接触者概率
 http://localhost:8080/clearAllPossibility
+
+
+<----------------------------第三方测试专用接口------------------------------>
+
+推理准确率
+http://localhost:8080/test/inference
+
+关联分析传播链准确率
+http://localhost:8080/test/chain
