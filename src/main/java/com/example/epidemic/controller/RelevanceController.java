@@ -137,43 +137,35 @@ public class RelevanceController {
         // 该天该区域的全部患者
         List<Patient> patients = inference_service.getPatientsByDate(date, areaCode);
 
-        // 筛查重点对象
-        List<Contact> keyPersons = new LinkedList<>();
-        // 潜在患者分片
-        List<List<Contact>> lists = ListUtils.partition(potentialPatients, 10);
-        // 创建线程池
-        List<Thread> threads = new ArrayList<>();
-
-        for (Contact c : potentialPatients) {
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    int count = 0;
-                    for (Patient p : patients) {
-                        try {
-                            if (relevance_service.checkTwoPerson(p, c)) {
-                                count++;
-                            }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        if (count >= 2) {
-                            keyPersons.add(c);
-                            break;
-                        }
-                    }
-                }
-            });
-            t.start();
-            threads.add(t);
-        }
-
-        // 等待所有线程异步执行完
-        for (Thread t : threads) t.join();
+        List<Contact> keyPersons = relevance_service.getKeyPersons(potentialPatients, patients);
 
         long end = System.currentTimeMillis();
         System.out.println("keyPersonFilter执行用时：" + (end - start) + "ms");
         return keyPersons;
+    }
+
+    @GetMapping("/keyPersonFilterByCity")
+    @ResponseBody
+    public List<Contact> findKeyPersonByCity(@PathParam("date") String date,
+                                             @PathParam("cityCode") String cityCode) throws ParseException, InterruptedException {
+
+        long start = System.currentTimeMillis();
+        Set<String> areas = BasicInformation.getCityAreas(cityCode);
+        List<Contact> cityKeyPersons = new ArrayList<>();
+
+        for (String areaCode : areas) {
+            // 经推理认定的潜在患者
+            List<Contact> potentialPatients = relevance_service.getPotentialPatient(date, areaCode);
+            if (potentialPatients == null || potentialPatients.size() == 0) continue;
+            // 该天该区域的全部患者
+            List<Patient> patients = inference_service.getPatientsByDate(date, areaCode);
+            List<Contact> keyPersons = relevance_service.getKeyPersons(potentialPatients, patients);
+            for (Contact c : keyPersons) cityKeyPersons.add(c);
+        }
+
+        long end = System.currentTimeMillis();
+        System.out.println("keyPersonFilterByCity执行用时：" + (end - start) + "ms");
+        return cityKeyPersons;
     }
 
     // 查看某个患者的潜在患者

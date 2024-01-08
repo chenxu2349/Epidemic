@@ -31,8 +31,11 @@ http://localhost:8080/getRelevanceChain?date=2023-07-28&areaCode=410102
 按天和城市查询传播链（显示全市的传播链）
 http://localhost:8080/getCityRelevanceChain?date=2023-07-28&cityCode=410100
 
-重点对象筛查
+重点对象筛查(区域)
 http://localhost:8080/keyPersonFilter?date=2023-07-28&areaCode=410102
+
+重点对象筛查(城市)
+http://localhost:8080/keyPersonFilterByCity?date=2023-07-28&cityCode=410100
 
 查找某个患者的潜在患者
 http://localhost:8080/getPotentialPatients?patient_id=100001&date=2023-07-28

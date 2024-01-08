@@ -4,6 +4,7 @@ import com.example.epidemic.mapper.ChainMapper;
 import com.example.epidemic.mapper.TestMapper;
 import com.example.epidemic.pojo.*;
 import com.example.epidemic.utils.ThreadPoolFactory;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -229,5 +230,49 @@ public class RelevanceService {
     }
 
     public void checkTwoChain() {
+    }
+
+    public List<Contact> getKeyPersons(List<Contact> potentialPatients, List<Patient> patients) {
+        // 筛查重点对象
+        List<Contact> keyPersons = new LinkedList<>();
+        // 潜在患者分片
+        List<List<Contact>> lists = ListUtils.partition(potentialPatients, 10);
+        // 创建线程池
+        List<Thread> threads = new ArrayList<>();
+
+        for (Contact c : potentialPatients) {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    int count = 0;
+                    for (Patient p : patients) {
+                        try {
+                            if (checkTwoPerson(p, c)) {
+                                count++;
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        if (count >= 2) {
+                            keyPersons.add(c);
+                            break;
+                        }
+                    }
+                }
+            });
+            t.start();
+            threads.add(t);
+        }
+
+        // 等待所有线程异步执行完
+        for (Thread t : threads) {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return keyPersons;
     }
 }
